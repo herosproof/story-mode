@@ -39,14 +39,16 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 /* ── stage select ── */
 .stage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
 .stage-card{position:relative;text-align:left;background:var(--card-bg);border:1px solid var(--border-gold);border-radius:20px;padding:20px;box-shadow:0 4px 24px var(--shadow),inset 0 1px 0 rgba(255,255,255,.8);transition:transform .18s,box-shadow .18s;overflow:hidden;}
-.stage-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--sc,var(--gold)),transparent);}
+.stage-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:2;background:linear-gradient(90deg,transparent,var(--sc,var(--gold)),transparent);}
 .stage-card:not(.locked):hover{transform:translateY(-5px);box-shadow:0 10px 32px var(--shadow);}
 .stage-card.locked{opacity:.45;cursor:default;filter:grayscale(.5);}
-.stage-num{font-family:'Press Start 2P',monospace;font-size:.6rem;color:var(--gold-deep);letter-spacing:.14em;margin-bottom:8px;}
-.stage-name{font-size:1.2rem;font-weight:700;color:var(--text-dark);line-height:1.3;}
-.stage-name .jp{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.9rem;color:var(--text-soft);margin-top:2px;}
-.stage-gram{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.84rem;color:var(--brown);margin-top:9px;line-height:1.6;}
-.stage-stars{margin-top:11px;font-size:1.05rem;letter-spacing:.12em;}
+.stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;z-index:0;pointer-events:none;}
+.stage-card>:not(.stage-bg){position:relative;z-index:1;}
+.stage-num{font-family:'Press Start 2P',monospace;font-size:.62rem;color:var(--gold-deep2,#735410);letter-spacing:.14em;margin-bottom:8px;text-shadow:0 0 5px #f5eedc,0 0 9px #f5eedc;}
+.stage-name{font-size:1.24rem;font-weight:800;color:var(--text-dark);line-height:1.3;text-shadow:0 0 5px #f5eedc,0 0 10px #f5eedc,0 0 4px #f5eedc;}
+.stage-name .jp{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.92rem;font-weight:700;color:var(--text-soft);margin-top:2px;text-shadow:0 0 5px #f5eedc,0 0 9px #f5eedc;}
+.stage-gram{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.86rem;font-weight:700;color:#5c2810;margin-top:9px;line-height:1.6;text-shadow:0 0 5px #f5eedc,0 0 9px #f5eedc;}
+.stage-stars{margin-top:11px;font-size:1.05rem;letter-spacing:.12em;text-shadow:0 0 6px #f5eedc;}
 .stage-stars .off{opacity:.22;}
 
 /* ── stage view ── */
@@ -87,7 +89,7 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .beat.narr{display:block;}
 .beat.narr .en{font-style:italic;text-align:center;color:rgba(70,48,30,.82);font-size:.96rem;}
 .beat.narr .jp{text-align:center;display:block;}
-.beat-portrait{flex:0 0 44px;width:44px;height:54px;border-radius:10px;background:radial-gradient(circle at 50% 35%,rgba(200,160,224,.5),rgba(74,56,112,.3));display:flex;align-items:center;justify-content:center;font-size:1.35rem;border:1.5px solid rgba(138,103,18,.4);overflow:hidden;}
+.beat-portrait{flex:0 0 56px;width:56px;height:70px;border-radius:11px;background:radial-gradient(circle at 50% 35%,rgba(200,160,224,.5),rgba(74,56,112,.3));display:flex;align-items:center;justify-content:center;font-size:1.7rem;border:1.5px solid rgba(138,103,18,.4);overflow:hidden;}
 .beat-portrait img{width:100%;height:100%;object-fit:cover;}
 .beat-body{flex:1;min-width:0;}
 .beat-body .who{display:block;font-size:.78rem;font-weight:700;color:#6f44a0;margin-bottom:2px;}
@@ -99,7 +101,7 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .beat.jpfirst.jponly .en{display:block!important;}
 .beat.jpfirst.jponly .jp{display:none!important;}
 .room-tabs button.locked{opacity:.35;pointer-events:none;}
-.stage-note{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.76rem;color:var(--gold-deep);margin-top:8px;}
+.stage-note{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.78rem;font-weight:700;color:var(--gold-deep2,#735410);margin-top:8px;text-shadow:0 0 5px #f5eedc,0 0 9px #f5eedc;}
 
 /* ── stage goal box (shown at the top of a stage) ── */
 .stage-goal{background:var(--card-bg);border:1px solid var(--border-gold);border-left:5px solid var(--gold);border-radius:14px;padding:14px 18px;margin:0 0 16px;box-shadow:0 4px 18px var(--shadow),inset 0 1px 0 rgba(255,255,255,.8);}
@@ -143,6 +145,21 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .bgm-toggle:active{transform:scale(.9);}
 .bgm-vol{width:88px;height:5px;accent-color:var(--gold);cursor:pointer;}
 @media(max-width:480px){.bgm-vol{width:66px;}}
+
+/* ── hearts (quests + boss lives) ── */
+.stage-hearts{text-align:center;font-size:1.5rem;letter-spacing:.14em;margin:-4px 0 14px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
+.stage-hearts .lost{opacity:.28;filter:grayscale(1);}
+
+/* ── out-of-hearts overlay ── */
+.gameover{position:fixed;inset:0;z-index:3200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(46,26,80,.92);backdrop-filter:blur(5px);animation:goFade .5s ease;}
+.gameover.hide{display:none;}
+@keyframes goFade{from{opacity:0}to{opacity:1}}
+.gameover-inner{text-align:center;max-width:400px;}
+.gameover-emoji{font-size:3.4rem;margin-bottom:6px;filter:drop-shadow(0 0 16px rgba(240,208,96,.6));}
+.gameover-msg{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.4rem;color:#fff;line-height:1.5;margin-bottom:12px;text-shadow:0 0 18px rgba(200,160,224,.6);}
+.gameover-sub{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.95rem;color:var(--purple-light);line-height:1.85;margin-bottom:22px;}
+.gameover-btn{font-family:'Press Start 2P',monospace;font-size:.72rem;letter-spacing:.04em;color:#fff7e0;background:linear-gradient(135deg,var(--gold-deep),var(--gold));border:none;border-radius:30px;padding:15px 26px;box-shadow:0 5px 18px rgba(0,0,0,.4);transition:transform .15s;}
+.gameover-btn:active{transform:scale(.95);}
 
 /* spells */
 .spell{border:1px solid rgba(138,103,18,.35);border-radius:16px;margin-bottom:12px;overflow:hidden;background:rgba(255,255,255,.4);}
@@ -211,6 +228,20 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .btn-hub:hover{color:var(--gold-light);border-color:rgba(245,158,11,.4);}
 footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgba(201,160,48,.12);}
 .footer-text{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.86rem;color:rgba(217,201,168,.45);letter-spacing:.08em;line-height:2;}
+@media(min-width:760px){
+  .beat .en{font-size:1.16rem;}
+  .beat .jp{font-size:1rem;}
+  .beat-body .who{font-size:.86rem;}
+  .beat-portrait{flex:0 0 68px;width:68px;height:85px;font-size:2rem;}
+  .beat{gap:14px;}
+  .room-hint{font-size:.96rem;}
+  .stage-name{font-size:1.4rem;}
+  .stage-name .jp{font-size:1.02rem;}
+  .stage-gram{font-size:.96rem;}
+  .stage-goal .goal-text{font-size:1.14rem;}
+  .scene-divider{font-size:1.08rem;}
+  .boss-q,.quest-title{font-size:1.12rem;}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01s!important;}html{scroll-behavior:auto;}}
 </style>
 </head>
@@ -239,6 +270,7 @@ footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgb
       <span class="goal-label">🎯 GOAL 目標</span>
       <span class="goal-text" id="sv-goal-text"></span>
     </div>
+    <div class="stage-hearts" id="sv-hearts" hidden></div>
     <div class="room-tabs" id="room-tabs">
       <button data-room="story">📖 Story<small>物語</small></button>
       <button data-room="spells">🔍 Key Spells<small>呪文解析</small></button>
@@ -283,7 +315,17 @@ footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgb
   <!-- ══ BGM CONTROL ══ -->
   <div class="bgm-ctrl" id="bgm-ctrl" aria-label="Background music">
     <button class="bgm-toggle" id="bgm-toggle" type="button" aria-label="Music on / off" title="Music on / off">🔊</button>
-    <input class="bgm-vol" id="bgm-vol" type="range" min="0" max="100" value="50" aria-label="Music volume">
+    <input class="bgm-vol" id="bgm-vol" type="range" min="0" max="100" value="25" aria-label="Music volume">
+  </div>
+
+  <!-- ══ OUT OF HEARTS ══ -->
+  <div class="gameover hide" id="gameover" role="dialog" aria-modal="true" aria-labelledby="gameover-msg">
+    <div class="gameover-inner">
+      <div class="gameover-emoji">💫</div>
+      <p class="gameover-msg" id="gameover-msg">Out of hearts!<br>ハートがなくなっちゃった！</p>
+      <p class="gameover-sub">Heroes never give up — take a breath and try again! 💪<br>だいじょうぶ、ひとやすみして、もう一度チャレンジしよう！</p>
+      <button class="gameover-btn" id="gameover-btn" type="button">↺ Try Again · もう一度</button>
+    </div>
   </div>
 </div>
 
@@ -1011,8 +1053,8 @@ function stopSceneAudio(){if(currentSceneAudio){currentSceneAudio.pause();}}
      Missing files fall back to the emoji. ── */
 const SPEAKERS={
  'Lumi':['lumi','🧙‍♀️'],'Lumi (voice)':['lumi','🧙‍♀️'],
- 'Boy':['boy-hero','👦'],'Boy Hero':['boy-hero','👦'],
- 'Girl':['girl-hero','👧'],'Girl Hero':['girl-hero','👧'],
+ 'Boy':['boy','👦'],'Boy Hero':['boy-hero','👦'],
+ 'Girl':['girl','👧'],'Girl Hero':['girl-hero','👧'],
  'Both':['heroes','👫'],'Both Heroes':['heroes','👫'],
  'Mimic':['mimic','🧰'],'Golem':['golem','🗿'],'Dragon':['dragon','🐉'],'General Winter':['general-winter','❄️'],
  'King':['king','👑'],'Princess':['princess','👸'],'Baker':['baker','🍞'],'Cook':['cook','🍲'],'Librarian':['librarian','📚'],
@@ -1033,7 +1075,33 @@ const store={
 };
 let cur=null,room='story';
 
+/* ── hearts: shared lives for Quests + Boss. In-memory only, so a refresh resets them (low stakes). ── */
+const MAX_HEARTS=3;let hearts=MAX_HEARTS;
+function stageHasChallenges(){return cur&&(cur.quests||cur.boss);}
+function renderHearts(){
+  const el=$('sv-hearts');if(!el)return;
+  if(!stageHasChallenges()){el.hidden=true;return;}
+  el.hidden=false;
+  let h='';for(let i=0;i<MAX_HEARTS;i++)h+=i<hearts?'❤️':'<span class="lost">🤍</span>';
+  el.innerHTML=h;
+}
+function resetHearts(){hearts=MAX_HEARTS;renderHearts();}
+function loseHeart(){
+  if(hearts<=0)return;
+  hearts--;renderHearts();
+  if(hearts<=0)showGameOver();
+}
+function showGameOver(){$('gameover').classList.remove('hide');}
+$('gameover-btn').addEventListener('click',()=>{
+  $('gameover').classList.add('hide');
+  if(cur)openStage(cur); /* refresh the stage: hearts refill, back to the top — keeps BGM playing */
+  else{$('stage-view').classList.remove('on');$('select-view').style.display='';buildStageGrid();}
+});
+
+
 /* stage select */
+/* Background art per stage (assets/bg/<name>.jpg). Edit freely — missing files just don't show. */
+const STAGE_BG={0:'classroom',1:'magic-space',2:'magic-space',3:'castle',4:'castle',5:'forest',6:'forest',7:'mountain',8:'mountain',9:'sky',10:'sky',11:'magic-space'};
 function buildStageGrid(){
   const grid=$('stage-grid');grid.innerHTML='';
   STAGES.forEach(st=>{
@@ -1042,7 +1110,9 @@ function buildStageGrid(){
     const stars=rooms.map(r=>done[r]?'⭐':'<span class="off">⭐</span>').join('');
     const b=document.createElement('button');
     b.className='stage-card';b.style.setProperty('--sc',st.accent);
-    b.innerHTML=`<div class="stage-num">STAGE ${st.id}</div>
+    const bg=STAGE_BG[st.id];
+    b.innerHTML=`${bg?`<img class="stage-bg" src="${ASSET}bg/${bg}.jpg" alt="" onerror="this.remove()">`:''}
+      <div class="stage-num">STAGE ${st.id}</div>
       <div class="stage-name">${st.nameEn}<span class="jp">${ruby(st.nameJp)}</span></div>
       <div class="stage-gram">🔑 ${ruby(st.gram)}</div>
       <div class="stage-stars">${stars}</div>
@@ -1074,6 +1144,7 @@ function openStage(st){
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('locked',!has[b.dataset.room]));
   buildStory();
   if(st.spells)buildSpells();if(st.vocab)buildVocab();if(st.quests)buildQuests();if(st.boss)buildBoss();
+  resetHearts();
   showRoom('story');
   window.scrollTo({top:0,behavior:'smooth'});
   markDone('story'); /* opening the chapter counts as reading it */
@@ -1286,7 +1357,7 @@ function buildOrder(blk,q,onClear){
       b.addEventListener('click',()=>{
         if(t===q.answer[pos]){b.classList.add('picked');line.textContent+=(pos?' ':'')+t;pos++;
           if(pos>=q.answer.length){status.textContent='クリア！ ⭐ '+q.answer.join(' ');if(!done){done=true;onClear();}}
-        }else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),350);}
+        }else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),350);}
       });
       tiles.appendChild(b);
     });
@@ -1308,7 +1379,7 @@ function buildPairs(blk,q,onClear){
       if(sel===b){sel.classList.remove('picked');sel=null;return;}
       if(sel.dataset.k===b.dataset.k){sel.classList.remove('picked');sel.classList.add('good');b.classList.add('good');sel=null;solved++;
         if(solved>=q.pairs.length){status.textContent='クリア！ ⭐';if(!done){done=true;onClear();}}
-      }else{b.classList.add('bad');const s=sel;sel=null;setTimeout(()=>{b.classList.remove('bad');s.classList.remove('picked');},380);}
+      }else{b.classList.add('bad');loseHeart();const s=sel;sel=null;setTimeout(()=>{b.classList.remove('bad');s.classList.remove('picked');},380);}
     });
     tiles.appendChild(b);
   });
@@ -1324,7 +1395,7 @@ function buildChoice(blk,q,onClear){
     const b=document.createElement('button');b.textContent=o.t;
     b.addEventListener('click',()=>{
       if(o.i===q.correct){b.classList.add('good');status.textContent='クリア！ ⭐';if(!done){done=true;onClear();}}
-      else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),380);}
+      else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
     });
     opts.appendChild(b);
   });
@@ -1375,7 +1446,7 @@ function buildBoss(){
       const b=document.createElement('button');b.textContent=o.t;
       b.addEventListener('click',()=>{
         if(o.i===q.c){b.classList.add('good');setTimeout(()=>{qi++;qi>=6?clearBoss():ask();},520);}
-        else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),380);}
+        else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
       });
       opts.appendChild(b);
     });
@@ -1398,7 +1469,7 @@ function buildBoss(){
   const modal=$('intro-modal'),startBtn=$('intro-start');
   const bgm=new Audio(ASSET+SCENE_AUDIO_DIR+'exploria.mp3');
   bgm.loop=true;
-  let vol=store.get('bgmVol');if(vol==null)vol=50;
+  let vol=store.get('bgmVol');if(vol==null)vol=25;
   let off=store.get('bgmOff')===true;
   bgm.volume=vol/100;
   const toggle=$('bgm-toggle'),slider=$('bgm-vol');
