@@ -150,6 +150,25 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .stage-hearts{text-align:center;font-size:1.5rem;letter-spacing:.14em;margin:-4px 0 14px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
 .stage-hearts .lost{opacity:.28;filter:grayscale(1);}
 
+
+/* ── pool engine: phases, production input, speaking ── */
+.phase-tag{text-align:center;font-family:'Press Start 2P',monospace;font-size:.5rem;letter-spacing:.08em;color:var(--gold-deep);margin:2px 0 10px;}
+.phase-tag .jp{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.78rem;font-weight:700;margin-top:5px;color:var(--brown);}
+.bq-skel{text-align:center;font-size:.95rem;letter-spacing:.15em;color:var(--brown);margin:4px 0 8px;word-break:break-all;}
+.bq-inrow{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap;}
+.bq-in{flex:1;min-width:140px;border:2px solid rgba(138,103,18,.45);border-radius:12px;padding:11px 12px;font-size:1rem;font-family:inherit;background:rgba(255,255,255,.8);color:var(--text-dark);}
+.bq-in:focus{outline:none;border-color:var(--gold-deep);}
+.bq-in.bad{border-color:var(--red);animation:shake .3s;}
+.bq-go{background:linear-gradient(135deg,var(--gold-deep),var(--gold));color:#fff7e0;border:none;border-radius:12px;padding:11px 18px;font-weight:700;font-size:1.05rem;}
+.mic-btn{background:rgba(255,255,255,.65);border:2px solid rgba(138,103,18,.4);border-radius:12px;padding:10px 13px;font-size:1rem;font-weight:700;color:var(--text-dark);}
+.mic-btn.rec{animation:micpulse 1s infinite;border-color:var(--red);background:#f8dede;}
+@keyframes micpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.heard{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.86rem;color:var(--brown);text-align:center;margin:6px 0;line-height:1.7;}
+.heard b{color:var(--text-dark);}
+.fixword{background:#f5d3d3!important;border-color:var(--red)!important;text-decoration:line-through;}
+.round-dots{text-align:center;font-size:.8rem;letter-spacing:.25em;color:var(--gold-deep);margin-bottom:6px;}
+.say-btn{background:rgba(255,255,255,.65);border:2px solid rgba(138,103,18,.4);border-radius:12px;padding:9px 14px;font-size:.95rem;font-weight:700;color:var(--text-dark);}
+
 /* ── out-of-hearts overlay ── */
 .gameover{position:fixed;inset:0;z-index:3200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(46,26,80,.92);backdrop-filter:blur(5px);animation:goFade .5s ease;}
 .gameover.hide{display:none;}
@@ -402,45 +421,30 @@ const STAGES=[
     {w:'yes',m:'イエス / はい'},{w:'no',m:'ノー / いいえ'},
     {w:'hero',m:'ヒーロー / 英雄'},{w:'magic',m:'マジック / 魔法'},
   ],
-  quests:[
+    extraQuests:[
     {type:'order',title:'Alphabet Quest',jp:'アルファベットを A から順番にタップ！',
      tiles:['A','B','C','D','E','F','G','H','I','J'],answer:['A','B','C','D','E','F','G','H','I','J'],shuffle:true},
     {type:'pairs',title:'Big & Small Letters',jp:'大文字と小文字をマッチさせよう！',
      pairs:[['A','a'],['B','b'],['D','d'],['E','e'],['G','g'],['Q','q']]},
-    {type:'choice',title:'Greeting Quest',jp:'正しいあいさつをえらぼう！',
-     q:'It is 8:00 in the morning. What do you say?',qjp:'朝8時。なんて言う？',
-     opts:['Good morning!','Good night!','Goodbye!','See you!'],correct:0},
-    {type:'order',title:'Spell Builder',jp:'ならべかえて文を作ろう：「わたしの名前はルミです」',
-     tiles:['My','name','is','Lumi','.'],answer:['My','name','is','Lumi','.'],shuffle:true},
   ],
-  bossName:'The Summoning Circle',bossJp:'召喚魔法陣(しょうかんまほうじん)を完成(かんせい)させよう！6つの答(こた)えで、6つの光(ひかり)がともるよ。',
-  boss:{
-    easy:[
-      {q:'The Baker smiles: "Hello!" What do you say?',jp:'パンやさんが「Hello!」なんて返(かえ)す？',opts:['Hello!','Goodbye!','No!','Sorry!'],c:0},
-      {q:'The Doctor asks: "How are you?"',jp:'お医者(いしゃ)さん「元気(げんき)ですか？」',opts:["I'm fine!",'It is Monday.','Ten stars.','It is windy.'],c:0},
-      {q:'The Baker holds something. "What\'s this?" 🍞',jp:'パンやさん「これは何(なに)？」',opts:["It's bread.","I'm fine.",'Yes, I do.',"Let's play!"],c:0},
-      {q:'The Candy Cat asks: "Do you like candy?"',jp:'キャンディーキャット「あめは好(す)き？」',opts:['Yes, I do.','Yes, I am.','It is candy.','I am candy.'],c:0},
-      {q:'The Weather Scholar asks: "How is the weather?" ☀️',jp:'天気学者(てんきがくしゃ)「天気(てんき)はどう？」',opts:["It's sunny.","It's Monday.","It's a cat.","I'm ten."],c:0},
-      {q:'The Gatekeeper asks: "Are you ready?"',jp:'門番(もんばん)「準備(じゅんび)はいい？」',opts:['Yes, I am!','Yes, I do!','I am gate!','No, thank you.'],c:0},
-    ],
-    normal:[
-      {q:'The Messenger asks Lumi: "How do you spell your name?"',jp:'伝令(でんれい)「名前(なまえ)はどう書(か)くの？」',opts:['L-U-M-I. Lumi.','Lumi is nice.','I like Lumi.','My name is.'],c:0},
-      {q:'The Teacher asks: "What subject do you like?"',jp:'先生(せんせい)「好(す)きな教科(きょうか)は？」',opts:['I like arts and crafts.','I am arts.','Yes, I do.','It is school.'],c:0},
-      {q:'The Elf asks: "When is your birthday?"',jp:'エルフ「誕生日(たんじょうび)はいつ？」',opts:['My birthday is July 20th.','I like July.','It is my birthday.','Yes, it is.'],c:0},
-      {q:'The Bard asks: "Can you play the drum?"',jp:'楽士(がくし)「たいこはたたける？」（できない時）',opts:["No, I can't.",'No, I am not.',"No, I don't like.",'No, drum.'],c:0},
-      {q:'"Where is the castle library?" you ask the Guard.',jp:'衛兵(えいへい)に「図書室(としょしつ)はどこ？」と聞(き)いたら…',opts:['Go straight and turn left.','I like the library.','It is 100 yen.','Yes, please.'],c:0},
-      {q:'The Cook asks: "What would you like?" 🍲',jp:'料理人(りょうりにん)「何(なに)にしますか？」',opts:["I'd like mushroom soup, please.",'I am mushroom soup.','Soup likes me.','Yes, I would.'],c:0},
-    ],
-    hard:[
-      {q:'The King asks: "What is your best memory?"',jp:'王様(おうさま)「一番(いちばん)の思(おも)い出(で)は？」',opts:['My best memory is the forest party.','I am a party.','Yes, I did.','Party likes me.'],c:0},
-      {q:'The Mountain Innkeeper asks: "What did you eat for breakfast?"',jp:'山宿(やまやど)の主人(しゅじん)「朝(あさ)ごはんは何(なに)を食(た)べた？」',opts:['I ate bread and soup.','I eat bread tomorrow.','I am bread.','Bread is eat.'],c:0},
-      {q:'The Hunter asks: "Where did you go last Sunday?"',jp:'狩人(かりゅうど)「先週(せんしゅう)の日曜日(にちようび)、どこへ行(い)った？」',opts:['I went to the mountain.','I go to the mountain yesterday.','I am the mountain.','Mountain went to me.'],c:0},
-      {q:'The Scholar asks: "What do you want to be?"',jp:'学者(がくしゃ)「将来(しょうらい)、何(なに)になりたい？」',opts:['I want to be a mage.','I want a mage is.','I am want mage.','Mage wants me.'],c:0},
-      {q:'The Fairy asks: "Why do you want to go to the Sky Area?"',jp:'妖精(ようせい)「なぜ空(そら)エリアに行(い)きたいの？」',opts:['I want to see the clouds.','Sky is want.','Yes, I want.','I am the sky.'],c:0},
-      {q:'The Goat Herder asks: "What time do you usually get up?"',jp:'ヤギ飼(か)い「ふだん何時(なんじ)に起(お)きる？」',opts:['I usually get up at 6 a.m.','I am 6 a.m.','6 a.m. gets up.','Yes, at 6.'],c:0},
-    ],
-  },
-  clearMsg:'The circle is complete! FLASH! ✨',clearJp:'魔法陣(まほうじん)が完成(かんせい)！つぎのステージで、ルミの世界(せかい)に到着(とうちゃく)だ！'},
+  pool:[
+{en:"Nice to meet you.",jp:"はじめまして。",chunks:["Nice","to","meet","you."],traps:["meets","me"],blank:{i:2,opts:["meet","meets","meeting","met"]},broken:"Nice to meets you.",fixIdx:2,fix:"meet",fixOpts:["meets","meeting","met"],accept:["nice to meet you"],speak:true,hint:"はじめて会(あ)った人(ひと)への あいさつ！"},
+{en:"I'm fine, thank you.",jp:"元気(げんき)です、ありがとう。",chunks:["I'm","fine,","thank","you."],traps:["thanks","is"],blank:{i:0,opts:["I'm","Im","Is","Me"]},broken:"I'm fine, thanks you.",fixIdx:2,fix:"thank",fixOpts:["thanks","thanking","thanked"],accept:["i am fine thank you"],speak:true,hint:"「How are you?」に ていねいに 答(こた)えよう！"},
+{en:"My name is Lumi.",jp:"わたしの名前(なまえ)はルミです。",chunks:["My","name","is","Lumi."],traps:["are","am"],blank:{i:2,opts:["is","am","are","be"]},broken:"My name are Lumi.",fixIdx:2,fix:"is",fixOpts:["are","am","be"],accept:["my name is lumi"],speak:true},
+{en:"How are you?",jp:"元気(げんき)ですか？",chunks:["How","are","you?"],traps:["is"],blank:{i:1,opts:["are","is","am","do"]},broken:"How is you?",fixIdx:1,fix:"are",fixOpts:["is","am","do"],accept:["how are you"],speak:true,hint:"あいてに「元気(げんき)？」と 聞(き)いてみよう！"},
+{en:"Good morning, Lumi!",jp:"おはよう、ルミ！",chunks:["Good","morning,","Lumi!"],traps:["night,"],blank:{i:1,opts:["morning,","night,","evening,","afternoon,"]},accept:["good morning lumi","good morning"],speak:true,hint:"朝(あさ)の あいさつ！"},
+{en:"What's your name?",jp:"あなたの名前(なまえ)は？",chunks:["What's","your","name?"],traps:["you"],blank:{i:1,opts:["your","you","my","me"]},broken:"What's you name?",fixIdx:1,fix:"your",fixOpts:["you","yours","me"],accept:["what is your name"],speak:true,hint:"名前(なまえ)を 聞(き)いてみよう！"},
+{en:"I'm ready!",jp:"準備(じゅんび)オッケー！",chunks:["I'm","ready!"],blank:{i:0,opts:["I'm","Me","My","Is"]},accept:["i am ready"],speak:true,hint:"「準備(じゅんび)はいい？」→ ばっちり！と 答(こた)えよう"},
+{en:"Thank you very much.",jp:"どうも ありがとうございます。",chunks:["Thank","you","very","much."],traps:["many.","thanks"],blank:{i:3,opts:["much.","many.","more.","lot."]},broken:"Thank you very many.",fixIdx:3,fix:"much.",fixOpts:["many.","more.","lot."],accept:["thank you very much"],speak:true},
+{en:"You're welcome.",jp:"どういたしまして。",chunks:["You're","welcome."],blank:{i:0,opts:["You're","Your","You","Yours"]},accept:["you are welcome"],speak:true,hint:"「Thank you!」と 言(い)われたら？"},
+{en:"See you later!",jp:"またあとでね！",chunks:["See","you","later!"],traps:["Sees"],blank:{i:0,opts:["See","Sees","Saw","Sea"]},broken:"Sees you later!",fixIdx:0,fix:"See",fixOpts:["Sees","Saw","Seeing"],accept:["see you later","see you"],speak:true,hint:"わかれる ときの あいさつ！"},
+{en:"I'm sorry.",jp:"ごめんなさい。",chunks:["I'm","sorry."],blank:{i:1,opts:["sorry.","happy.","fine.","ready."]},accept:["i am sorry"],speak:true,hint:"あやまる ときは？"},
+{en:"That's OK.",jp:"だいじょうぶだよ。",chunks:["That's","OK."],blank:{i:0,opts:["That's","Thats","That","This"]},accept:["that is ok","that is okay"],speak:true,hint:"「I'm sorry.」と 言(い)われたら、やさしく…"},
+{en:"Please help me!",jp:"たすけてください！",chunks:["Please","help","me!"],traps:["helps"],blank:{i:1,opts:["help","helps","helping","helped"]},broken:"Please helps me!",fixIdx:1,fix:"help",fixOpts:["helps","helping","helped"],accept:["please help me","help me"],speak:true,hint:"ルミの さいしょの ことば！"},
+{en:"I am eleven years old.",jp:"わたしは11さいです。",chunks:["I","am","eleven","years","old."],traps:["year","is"],blank:{i:3,opts:["years","year","olds","age"]},broken:"I am eleven year old.",fixIdx:3,fix:"years",fixOpts:["year","olds","age"],accept:["i am eleven years old","i am eleven","i am twelve years old","i am twelve","i am ten years old","i am ten"],speak:true,hint:"「How old are you?」に 答(こた)えよう！（自分(じぶん)の年(とし)でOK）"},
+  ],
+  bossName:'The Summoning Circle',bossJp:'召喚魔法陣(しょうかんまほうじん)を完成(かんせい)させよう！3つのフェーズ、7つの光(ひかり)。フルセンテンスで答(こた)えると、錨(いかり)がきみの声(こえ)をおぼえるよ！',
+    clearMsg:'The circle is complete! FLASH! ✨',clearJp:'魔法陣(まほうじん)が完成(かんせい)！つぎのステージで、ルミの世界(せかい)に到着(とうちゃく)だ！'},
 
 { id:1, accent:'#9060c0', nameEn:'Arrival', nameJp:'到着(とうちゃく)',
   gram:'I am 〜 / Are you 〜? / I can 〜 の魔法',
@@ -475,45 +479,24 @@ const STAGES=[
     {w:'scared',m:'スケアード / こわがっている'},{w:'world',m:'ワールド / 世界'},
     {w:'castle',m:'キャッスル / お城'},{w:'guardian',m:'ガーディアン / 守護者'},
   ],
-  quests:[
-    {type:'pairs',title:'Be-Verb Match',jp:'主語とbe動詞をマッチ！',
-     pairs:[['I','am'],['You','are'],['I ×','am not'],['You ×','are not']]},
-    {type:'order',title:'Spell Builder ①',jp:'ならべかえ：「わたしはヒーローです」',
-     tiles:['I','am','a','hero','.'],answer:['I','am','a','hero','.'],shuffle:true},
-    {type:'order',title:'Spell Builder ②',jp:'ならべかえ：「わたしは速く走れます」',
-     tiles:['I','can','run','fast','.'],answer:['I','can','run','fast','.'],shuffle:true},
-    {type:'choice',title:'Answer Quest',jp:'「Can you fly?」— 正しい答えは？',
-     q:'Lumi asks: "Can you fly?"',qjp:'ルミ「飛べる？」（飛べない時の答え）',
-     opts:["No, I can't.",'No, I am not.',"No, I don't.",'No, fly.'],correct:0},
+    pool:[
+{en:"I am a hero from Japan.",jp:"わたしは日本(にほん)から来(き)たヒーローです。",chunks:["I","am","a","hero","from","Japan."],traps:["is","are"],blank:{i:1,opts:["am","is","are","be"]},broken:"I is a hero from Japan.",fixIdx:1,fix:"am",fixOpts:["is","are","be"],accept:["i am a hero from japan","i am a hero"],speak:true,hint:"自己(じこ)しょうかい しよう！"},
+{en:"I like volleyball.",jp:"わたしはバレーボールが好(す)きです。",chunks:["I","like","volleyball."],traps:["likes"],blank:{i:1,opts:["like","likes","liking","liked"]},broken:"I likes volleyball.",fixIdx:1,fix:"like",fixOpts:["likes","liking","liked"],accept:["i like volleyball"],speak:true},
+{en:"I can run fast.",jp:"わたしは速(はや)く走(はし)れます。",chunks:["I","can","run","fast."],traps:["runs","cans"],blank:{i:1,opts:["can","cans","do","am"]},broken:"I can runs fast.",fixIdx:2,fix:"run",fixOpts:["runs","running","ran"],accept:["i can run fast"],speak:true},
+{en:"I can't fly.",jp:"わたしは飛(と)べません。",chunks:["I","can't","fly."],traps:["flying"],blank:{i:1,opts:["can't","can","don't","not"]},broken:"I can't flying.",fixIdx:2,fix:"fly.",fixOpts:["flying.","flies.","flew."],accept:["i can not fly"],speak:true},
+{en:"Are you ready?",jp:"準備(じゅんび)はいい？",chunks:["Are","you","ready?"],traps:["Is"],blank:{i:0,opts:["Are","Is","Am","Do"]},broken:"Is you ready?",fixIdx:0,fix:"Are",fixOpts:["Is","Am","Does"],accept:["are you ready"],speak:true},
+{en:"Yes, I am!",jp:"はい、そうです！",chunks:["Yes,","I","am!"],traps:["is!"],blank:{i:2,opts:["am!","is!","do!","are!"]},accept:["yes i am"],speak:true,hint:"「Are you ready?」に 元気(げんき)よく 答(こた)えよう！"},
+{en:"You are a hero, too.",jp:"きみもヒーローだよ。",chunks:["You","are","a","hero,","too."],traps:["is","am"],blank:{i:1,opts:["are","is","am","be"]},broken:"You is a hero, too.",fixIdx:1,fix:"are",fixOpts:["is","am","be"],accept:["you are a hero too"],speak:true},
+{en:"I play soccer every day.",jp:"わたしは毎日(まいにち)サッカーをします。",chunks:["I","play","soccer","every","day."],traps:["plays"],blank:{i:1,opts:["play","plays","playing","played"]},broken:"I plays soccer every day.",fixIdx:1,fix:"play",fixOpts:["plays","playing","played"],accept:["i play soccer every day"],speak:true},
+{en:"Can you jump?",jp:"ジャンプできる？",chunks:["Can","you","jump?"],traps:["Do"],blank:{i:0,opts:["Can","Do","Are","Is"]},broken:"Can you jumps?",fixIdx:2,fix:"jump?",fixOpts:["jumps?","jumping?","jumped?"],accept:["can you jump"],speak:true},
+{en:"Yes, I can!",jp:"うん、できるよ！",chunks:["Yes,","I","can!"],traps:["do!"],blank:{i:2,opts:["can!","am!","do!","is!"]},accept:["yes i can"],speak:true,hint:"「Can you run?」→ できるよ！と 答(こた)えよう"},
+{en:"No, I can't.",jp:"ううん、できないよ。",chunks:["No,","I","can't."],blank:{i:2,opts:["can't.","can.","don't.","not."]},accept:["no i can not"],speak:true,hint:"「Can you fly?」→ できない！と 答(こた)えよう"},
+{en:"I am not scared.",jp:"わたしは こわくないよ。",chunks:["I","am","not","scared."],traps:["no"],blank:{i:2,opts:["not","no","never","don't"]},broken:"I am no scared.",fixIdx:2,fix:"not",fixOpts:["no","never","none"],accept:["i am not scared"],speak:true},
+{en:"We are heroes.",jp:"わたしたちはヒーローです。",chunks:["We","are","heroes."],traps:["is","am"],blank:{i:1,opts:["are","is","am","be"]},broken:"We is heroes.",fixIdx:1,fix:"are",fixOpts:["is","am","be"],accept:["we are heroes"],speak:true},
   ],
-  bossName:'Lumi\'s Welcome Test',bossJp:'ルミのウェルカム・テスト！ヘルパーの力(ちから)を見(み)せよう。',
-  boss:{
-    easy:[
-      {q:'Say hello to Lumi: "___ Lumi!"',jp:'ルミにあいさつ！',opts:['Hello,','Goodbye,','No,','Sorry,'],c:0},
-      {q:'The Guard asks: "Are you a hero?"',jp:'衛兵(えいへい)「あなたはヒーロー？」',opts:['Yes, I am!','Yes, I do!','Yes, you are!','I hero!'],c:0},
-      {q:'I ___ a helper.',jp:'「わたしはヘルパーです」',opts:['am','are','is','can'],c:0},
-      {q:'You ___ brave!',jp:'「あなたは勇敢(ゆうかん)だ！」',opts:['are','am','is','do'],c:0},
-      {q:'I ___ swim!',jp:'「泳(およ)げます！」',opts:['can','am','are','is'],c:0},
-      {q:'The Bard asks: "Can you sing?"',jp:'楽士(がくし)「歌(うた)える？」（歌える時）',opts:['Yes, I can.','Yes, I am.','Yes, I sing not.','Can yes.'],c:0},
-    ],
-    normal:[
-      {q:'I ___ from Japan.',jp:'「日本(にほん)から来(き)ました」',opts:['am','are','can','do'],c:0},
-      {q:'Lumi asks: "___ you ready, heroes?"',jp:'ルミ「準備(じゅんび)はいい？」',opts:['Are','Am','Is','Can'],c:0},
-      {q:'I can run, ___ I can\'t fly.',jp:'「走(はし)れる、でも飛(と)べない」',opts:['but','and too','yes','am'],c:0},
-      {q:'The Woodcutter asks: "Can you play table tennis?"',jp:'木(き)こり「卓球(たっきゅう)できる？」（できない時）',opts:["No, I can't.","No, I don't.",'No, I am not.','No, table tennis.'],c:0},
-      {q:'The Tailor is my friend. She ___ make a cape very well.',jp:'「仕立(した)て屋(や)さんは、マントをとても上手(じょうず)に作(つく)れる」',opts:['can','am','are','cans'],c:0},
-      {q:'The Merchant says: "You can ___ apples at my shop!"',jp:'商人(しょうにん)「うちの店(みせ)でリンゴが買(か)えるよ！」',opts:['buy','am','buys','is'],c:0},
-    ],
-    hard:[
-      {q:'"Hello! I ___ the Windmill Keeper. I ___ from the Forest Area."',jp:'「風車守(ふうしゃまも)りです。森(もり)エリアから来(き)ました」',opts:['am / am','is / is','are / are','can / can'],c:0},
-      {q:'Dragon is strong. She can ___ very high.',jp:'「ドラゴンはとても高(たか)く飛(と)べる」',opts:['fly','flies','flying','to fly'],c:0},
-      {q:'The Knight asks: "What sport do you like?"',jp:'騎士(きし)「好(す)きなスポーツは？」',opts:['I like table tennis.','I can table tennis.','I am table tennis.','Table tennis is like.'],c:0},
-      {q:'The Beekeeper says: "You can ___ sweet honey in this forest."',jp:'養蜂家(ようほうか)「この森(もり)で甘(あま)いハチミツが食(た)べられるよ」',opts:['eat','ate','eats','eating'],c:0},
-      {q:'The Guard asks: "Are you the Princess?"',jp:'衛兵(えいへい)「王女(おうじょ)さまですか？」（ちがう時）',opts:["No, I'm not.","No, I don't.","No, I can't.",'No, Princess.'],c:0},
-      {q:'I want to ___ Lumi\'s team!',jp:'「ルミのチームに入(はい)りたい！」',opts:['join','joins','am','can'],c:0},
-    ],
-  },
-  clearMsg:'You are true helpers! ⭐',clearJp:'きみたちは本物(ほんもの)のヘルパーだ！つぎは、四人(よにん)の守護者(しゅごしゃ)について学(まな)ぼう！'},
+  review:[0],
+  bossName:'Lumi\'s Welcome Test',bossJp:'ルミのウェルカム・テスト！3つのフェーズで、ヘルパーの力(ちから)を見(み)せよう。まちがえるとハートがへるよ！',
+    clearMsg:'You are true helpers! ⭐',clearJp:'きみたちは本物(ほんもの)のヘルパーだ！つぎは、四人(よにん)の守護者(しゅごしゃ)について学(まな)ぼう！'},
 
 { id:2, accent:'#4a9040', nameEn:'The Guardian Dossiers', nameJp:'守護者(しゅごしゃ)ファイル',
   gram:'This is 〜 / He is・She is 〜 / What is 〜? の魔法',
@@ -549,45 +532,24 @@ const STAGES=[
     {w:'proud',m:'プラウド / 誇り高い'},{w:'tricky',m:'トリッキー / ずるがしこい'},
     {w:'treasure',m:'トレジャー / 宝物'},{w:'map',m:'マップ / 地図'},
   ],
-  quests:[
-    {type:'pairs',title:'He / She / It Quest',jp:'だれのこと？マッチさせよう！',
-     pairs:[['Dragon 🐉','She'],['Golem 🗿','He'],['the crystal 💎','It'],['the Heroes 👫','They']]},
-    {type:'order',title:'Spell Builder ①',jp:'ならべかえ：「これはゴーレムです」',
-     tiles:['This','is','Golem','.'],answer:['This','is','Golem','.'],shuffle:true},
-    {type:'order',title:'Spell Builder ②',jp:'ならべかえ：「彼は森エリアの守護者です」',
-     tiles:['He','is','the','guardian','of','the','Forest','Area','.'],answer:['He','is','the','guardian','of','the','Forest','Area','.'],shuffle:true},
-    {type:'choice',title:'Question Quest',jp:'遠くの光を指さして聞くなら？',
-     q:'You point at a far light. You ask: "___?"',qjp:'遠くのものを聞く時は？',
-     opts:['What is that','What is this','Who are you','Are you light'],correct:0},
+    pool:[
+{en:"This is Mimic.",jp:"これはミミックです。",chunks:["This","is","Mimic."],traps:["These","are"],blank:{i:0,opts:["This","These","Them","It's"]},broken:"This are Mimic.",fixIdx:1,fix:"is",fixOpts:["are","am","be"],accept:["this is mimic"],speak:true,hint:"ルミの ファイルを 見(み)せながら…"},
+{en:"He is the guardian of the Castle Area.",jp:"彼(かれ)はお城(しろ)エリアの守護者(しゅごしゃ)です。",chunks:["He","is","the","guardian","of","the","Castle","Area."],traps:["am"],blank:{i:1,opts:["is","am","are","be"]},broken:"He are the guardian of the Castle Area.",fixIdx:1,fix:"is",fixOpts:["are","am","be"],accept:["he is the guardian of the castle area"],speak:true},
+{en:"She is proud and strong.",jp:"彼女(かのじょ)は誇(ほこ)り高(たか)くて、強(つよ)い。",chunks:["She","is","proud","and","strong."],traps:["are"],blank:{i:0,opts:["She","He","It","They"]},broken:"She are proud and strong.",fixIdx:1,fix:"is",fixOpts:["are","am","be"],accept:["she is proud and strong"],speak:true},
+{en:"He is very big and very kind.",jp:"彼(かれ)はとっても大(おお)きくて、とってもやさしい。",chunks:["He","is","very","big","and","very","kind."],traps:["much"],blank:{i:2,opts:["very","much","many","more"]},broken:"He is very big and very kindly.",fixIdx:6,fix:"kind.",fixOpts:["kindly.","kinds.","kindness."],accept:["he is very big and very kind"],speak:true},
+{en:"What is that light?",jp:"あの光(ひかり)は何(なに)？",chunks:["What","is","that","light?"],traps:["are"],blank:{i:1,opts:["is","are","am","do"]},broken:"What is that lights?",fixIdx:3,fix:"light?",fixOpts:["lights?","lighting?","lighted?"],accept:["what is that light","what is that"],speak:true,hint:"遠(とお)くの光(ひかり)を指(ゆび)さして 聞(き)こう！"},
+{en:"Is she scary?",jp:"彼女(かのじょ)はこわいの？",chunks:["Is","she","scary?"],traps:["Are"],blank:{i:0,opts:["Is","Are","Am","Do"]},broken:"Are she scary?",fixIdx:0,fix:"Is",fixOpts:["Are","Am","Do"],accept:["is she scary"],speak:true},
+{en:"No, she isn't.",jp:"ううん、こわくないよ。",chunks:["No,","she","isn't."],blank:{i:2,opts:["isn't.","aren't.","don't.","not."]},accept:["no she is not"],speak:true,hint:"「Is she scary?」→ こわくないよ！と 答(こた)えよう"},
+{en:"That is General Winter.",jp:"あれは冬将軍(ふゆしょうぐん)です。",chunks:["That","is","General","Winter."],traps:["Those"],blank:{i:0,opts:["That","Those","Them","These"]},broken:"That am General Winter.",fixIdx:1,fix:"is",fixOpts:["am","are","be"],accept:["that is general winter"],speak:true},
+{en:"He is quiet and cool.",jp:"彼(かれ)は静(しず)かで、クール。",chunks:["He","is","quiet","and","cool."],traps:["She"],blank:{i:1,opts:["is","am","are","do"]},broken:"He is quiets and cool.",fixIdx:2,fix:"quiet",fixOpts:["quiets","quietly","quieting"],accept:["he is quiet and cool"],speak:true},
+{en:"It is a map.",jp:"それは地図(ちず)です。",chunks:["It","is","a","map."],traps:["am"],blank:{i:2,opts:["a","an","the","two"]},broken:"It are a map.",fixIdx:1,fix:"is",fixOpts:["are","am","be"],accept:["it is a map"],speak:true,hint:"「What is this?」に 答(こた)えよう！（地図(ちず)だよ）"},
+{en:"She is Lumi.",jp:"彼女(かのじょ)はルミです。",chunks:["She","is","Lumi."],traps:["He"],blank:{i:0,opts:["She","He","It","This"]},broken:"She am Lumi.",fixIdx:1,fix:"is",fixOpts:["am","are","be"],accept:["she is lumi"],speak:true,hint:"「Who is she?」に 答(こた)えよう！"},
+{en:"This is my wand.",jp:"これはわたしの杖(つえ)です。",chunks:["This","is","my","wand."],traps:["me"],blank:{i:2,opts:["my","me","I","mine"]},broken:"This is me wand.",fixIdx:2,fix:"my",fixOpts:["me","I","mine"],accept:["this is my wand"],speak:true},
+{en:"He is my friend.",jp:"彼(かれ)はわたしの友達(ともだち)です。",chunks:["He","is","my","friend."],traps:["are"],blank:{i:1,opts:["is","am","are","do"]},broken:"He is I friend.",fixIdx:2,fix:"my",fixOpts:["I","me","mine"],accept:["he is my friend"],speak:true},
   ],
-  bossName:'Guardian Quiz Gate',bossJp:'守護者(しゅごしゃ)クイズの門(もん)！全問(ぜんもん)クリアで、お城(しろ)エリアへの道(みち)がひらく！',
-  boss:{
-    easy:[
-      {q:'___ is Lumi. (introducing her)',jp:'「こちらはルミです」',opts:['This','He','What','Am'],c:0},
-      {q:'Dragon is a girl. ___ is proud.',jp:'「彼女(かのじょ)は誇(ほこ)り高(たか)い」',opts:['She','He','It','This'],c:0},
-      {q:'Lumi is a girl. ___ is a mage.',jp:'「彼女(かのじょ)は魔法使(まほうつか)い」',opts:['She','He','It','That'],c:0},
-      {q:'"What is that?" 💎',jp:'「あれは何(なに)？」',opts:['It is a crystal.','Yes, it is.','He is a crystal.','That what is.'],c:0},
-      {q:'Golem ___ kind.',jp:'「ゴーレムはやさしい」',opts:['is','am','are','can'],c:0},
-      {q:'Mimic looks like a ___ box.',jp:'「ミミックは宝箱(たからばこ)みたい」',opts:['treasure','forest','sky','mountain'],c:0},
-    ],
-    normal:[
-      {q:'"Who is this?" — ___ my friend, the Fairy.',jp:'「こちらは友達(ともだち)の妖精(ようせい)です」',opts:['This is','He are','She am','It are'],c:0},
-      {q:'Who is the Blacksmith? — He ___ the strongest man in the Mountain Area.',jp:'「彼(かれ)は山(やま)エリアでいちばん力持(ちからも)ち」',opts:['is','am','are','can'],c:0},
-      {q:'The Potter is amazing. She can make cups very ___.',jp:'「陶芸家(とうげいか)さんは、とても上手(じょうず)にカップを作(つく)れる」',opts:['well','good','nice','fine'],c:0},
-      {q:'Golem is the guardian ___ the Forest Area.',jp:'「森(もり)エリアの守護者(しゅごしゃ)」',opts:['of','on','at','to'],c:0},
-      {q:'The Mushroom Gatherer asks: "What\'s this?" 🍄',jp:'きのこ採(と)り「これは何(なに)？」',opts:["It's a mushroom.","He's a mushroom.",'Yes, it is.','Mushroom is this.'],c:0},
-      {q:'General Winter is strong. Dragon is strong, ___.',jp:'「ドラゴンも強(つよ)い」',opts:['too','and','but','very'],c:0},
-    ],
-    hard:[
-      {q:'This is my new cape. ___ from the Tailor.',jp:'「仕立(した)て屋(や)さんからもらったマントです」',opts:["It's",'He is','This are','They am'],c:0},
-      {q:'"Where is the Candy Cat?" — She is ___ the Candy Forest.',jp:'「キャンディーの森(もり)にいます」',opts:['in','on','at','to'],c:0},
-      {q:'The Herbalist is kind. She is good ___ making medicine.',jp:'「薬草師(やくそうし)さんは薬(くすり)づくりが得意(とくい)」',opts:['at','in','on','to'],c:0},
-      {q:'Mama Bat and her baby ___ in a cave.',jp:'「コウモリの親子(おやこ)は洞窟(どうくつ)に住(す)んでいる」',opts:['live','lives','is live','living'],c:0},
-      {q:'The Little People ask: "Who is your hero?"',jp:'コビトたち「あなたのヒーローはだれ？」',opts:['My hero is Lumi.','I am hero Lumi.','Lumi hero is I.','Yes, Lumi.'],c:0},
-      {q:'This is the Miner. He works ___ the Mountain Area.',jp:'「坑夫(こうふ)さんは山(やま)エリアで働(はたら)いている」',opts:['in','of','too','is'],c:0},
-    ],
-  },
-  clearMsg:'The gate is open! 🏰',clearJp:'門(もん)がひらいた！つぎは、お城(しろ)エリアの町(まち)へ！'},
+  review:[0,1],
+  bossName:'Guardian Quiz Gate',bossJp:'守護者(しゅごしゃ)クイズの門(もん)！3つのフェーズをクリアして、お城(しろ)エリアへの道(みち)をひらけ！',
+    clearMsg:'The gate is open! 🏰',clearJp:'門(もん)がひらいた！つぎは、お城(しろ)エリアの町(まち)へ！'},
 { id:3, accent:'#c9a030', nameEn:"The Castle Town", nameJp:"お城下町(じょうかまち)",
   gram:"Do you 〜? / What 〜 do you like? / How many 〜?",
   beats:[{"divider": true, "en": "Scene 1 · The Town of Questions", "jp": "「質問の町」"}, {"who": "", "en": "The castle gate opens. Market stands, music, fresh bread.", "jp": "お城(しろ)の門(もん)が開(ひら)く。屋台(やたい)、音楽(おんがく)、焼(や)きたてパンのにおい。"}, {"who": "Baker", "en": "Heroes! Do you like bread?", "jp": "ヒーローだ！パンは好(す)き？"}, {"who": "Girl Hero", "en": "Yes, I do! I like bread very much!", "jp": "はい、好(す)きです！パン、大好(だいす)きです！"}, {"who": "Baker", "en": "Great! Here is some fresh bread for you!", "jp": "よかった！焼(や)きたてのパンをどうぞ！"}, {"who": "", "en": "An older man in a shiny crown hurries over, out of breath.", "jp": "ピカピカの王冠(おうかん)をつけた年配(ねんぱい)の男性(だんせい)が、息(いき)を切(き)らして急(いそ)いでやってくる。"}, {"who": "King", "en": "New heroes?! Finally! Do you like castles?", "jp": "新(あたら)しいヒーロー？！やっと来(き)た！お城(しろ)は好(す)き？"}, {"who": "Boy Hero", "en": "Yes, I do! I like the towers.", "jp": "はい、好(す)きです！塔(とう)が好(す)きです。"}, {"who": "King", "en": "Good answer. Follow me — my daughter wants to meet you too.", "jp": "いい答(こた)えだ。ついてきて——娘(むすめ)もきみたちに会(あ)いたがってる。"}, {"who": "", "en": "A girl with a flower crown waves from the fountain.", "jp": "花(はな)の冠(かんむり)をつけた女(おんな)の子(こ)が、噴水(ふんすい)のところで手(て)をふる。"}, {"who": "Princess", "en": "Hi! Do you like flowers? What color do you like?", "jp": "こんにちは！花(はな)は好(す)き？何色(なにいろ)が好(す)き？"}, {"who": "Girl Hero", "en": "Yes, I do! I like flowers, and I like pink! What color do you like?", "jp": "はい、好(す)きです！花(はな)も好(す)きだし、ピンクも好(す)き！あなたは何色(なにいろ)が好(す)きですか？"}, {"who": "Princess", "en": "(delighted) I like pink, too! Let's be friends!", "jp": "（うれしそうに）わたしもピンクが好(す)き！わたしたち、友達(ともだち)になろうね！"}, {"who": "Cook", "en": "(leaning out a window) What food do you like?! Tell me, I can make anything!", "jp": "（窓(まど)から身(み)を乗(の)り出(だ)して）好(す)きな食(た)べ物(もの)は？！教(おし)えて、なんでも作(つく)れるよ！"}, {"who": "Boy Hero", "en": "Really? Then... I like hamburger steak and pork cutlet! Can you make them?", "jp": "ほんとに？じゃあ…ハンバーグととんかつが好(す)きです！作(つく)れますか？"}, {"who": "Cook", "en": "You like meat! Yes, I can!", "jp": "お肉(にく)が好(す)きなんだね！うん、作(つく)れるよ！"}, {"who": "Librarian", "en": "(from the library door) Shhh! ...Do you like reading?", "jp": "（図書館(としょかん)のドアから）しーっ！…読書(どくしょ)は好(す)き？"}, {"who": "Boy Hero", "en": "(whispering back) Yes, I do. I like comic books.", "jp": "（ささやき返(かえ)して）はい、好(す)きです。マンガが好(す)きです。"}, {"who": "Librarian", "en": "Comic books are good, too. Just read quietly.", "jp": "マンガもいいわね。静(しず)かに読(よ)んでね。"}, {"divider": true, "en": "Scene 2 · The King's Count", "jp": "「王様の質問」"}, {"who": "King", "en": "(back at the castle steps) Alright, heroes. I need to know a few things before I let you further in.", "jp": "（お城(しろ)の階段(かいだん)に戻(もど)って）よし、ヒーローたち。もう少(すこ)し先(さき)に行(い)かせる前(まえ)に、いくつか知(し)りたいことがある。"}, {"who": "King", "en": "How many friends do you have — back in your world?", "jp": "きみたちの世界(せかい)には、友達(ともだち)が何人(なんにん)いる？"}, {"who": "Girl Hero", "en": "I have many friends! We usually play karuta or volleyball after lunch!", "jp": "友達(ともだち)、たくさんいます！お昼(ひる)ごはんのあと、よくかるたかバレーボールをします！"}, {"who": "Boy Hero", "en": "I have a few friends. We play games online — I know their names. I sometimes talk with them.", "jp": "友達(ともだち)は少(すこ)しです。オンラインでゲームをやってます——名前(なまえ)は知(し)ってます。ときどき話(はな)します。"}, {"who": "King", "en": "I see. How many gates does my castle have?", "jp": "なるほど。わしのお城(しろ)には、門(もん)がいくつある？"}, {"who": "Girl Hero", "en": "(guessing, loud) Um — Your castle has four gates!", "jp": "（あてずっぽうで、元気(げんき)よく）えーと——お城(しろ)には、門(もん)が4つあります！"}, {"who": "King", "en": "(impressed) That's right! My castle has four gates. North, south, east, and west.", "jp": "（感心(かんしん)して）せいかい！わしの城(しろ)には門(もん)が4つ。北(きた)、南(みなみ)、東(ひがし)、西(にし)。"}, {"who": "Princess", "en": "He asks everyone that. He's very proud of the gates.", "jp": "みんなに聞(き)くんです、それ。門(もん)のこと、すごく自慢(じまん)で。"}, {"who": "King", "en": "(not denying it) Last questions. The treasure room door can't open. Twenty knights tried. How many knights does that make, plus you two?", "jp": "（否定(ひてい)しない）最後(さいご)の質問(しつもん)だ。宝物(ほうもつ)の部屋(へや)のとびらが開(あ)かない。騎士(きし)が20人(にん)、挑戦(ちょうせん)した。きみたち二人(ふたり)を足(た)すと、何人(にん)になる？"}, {"who": "Boy Hero", "en": "Twenty-two.", "jp": "22人(にん)です。"}, {"who": "King", "en": "Twenty-two, and still can't open. Something is inside that door. I can hear... chewing.", "jp": "22人(にん)でも、まだ開(あ)かない。中(なか)に何(なに)かいる。かむ音(おと)が聞(き)こえるんだ。"}, {"who": "Lumi", "en": "(going pale) Chewing. I know that sound. Mimic.", "jp": "（顔(かお)が青(あお)くなって）かむ音(おと)。知(し)ってる、あの音(おと)。ミミックだ。"}],
@@ -1076,16 +1038,17 @@ const store={
 let cur=null,room='story';
 
 /* ── hearts: shared lives for Quests + Boss. In-memory only, so a refresh resets them (low stakes). ── */
-const MAX_HEARTS=3;let hearts=MAX_HEARTS;
-function stageHasChallenges(){return cur&&(cur.quests||cur.boss);}
+let maxHearts=3,hearts=3; /* quests: 3 · pool-boss battles: 5 */
+function stageHasChallenges(){return cur&&(cur.quests||cur.boss||cur.pool);}
 function renderHearts(){
   const el=$('sv-hearts');if(!el)return;
   if(!stageHasChallenges()){el.hidden=true;return;}
   el.hidden=false;
-  let h='';for(let i=0;i<MAX_HEARTS;i++)h+=i<hearts?'❤️':'<span class="lost">🤍</span>';
+  let h='';for(let i=0;i<maxHearts;i++)h+=i<hearts?'❤️':'<span class="lost">🤍</span>';
   el.innerHTML=h;
 }
-function resetHearts(){hearts=MAX_HEARTS;renderHearts();}
+function setHearts(n){maxHearts=n;hearts=n;renderHearts();}
+function resetHearts(){setHearts(3);}
 function loseHeart(){
   if(hearts<=0)return;
   hearts--;renderHearts();
@@ -1140,10 +1103,10 @@ function openStage(st){
   $('sv-goal-text').innerHTML=noFuri(st.gram);
   const done=store.get('stage'+st.id)||{};
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('done',!!done[b.dataset.room]));
-  const has={story:true,spells:!!st.spells,vocab:!!st.vocab,quests:!!st.quests,boss:!!st.boss};
+  const has={story:true,spells:!!st.spells,vocab:!!st.vocab,quests:!!(st.quests||st.pool),boss:!!(st.boss||st.pool)};
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('locked',!has[b.dataset.room]));
   buildStory();
-  if(st.spells)buildSpells();if(st.vocab)buildVocab();if(st.quests)buildQuests();if(st.boss)buildBoss();
+  if(st.spells)buildSpells();if(st.vocab)buildVocab();if(st.quests||st.pool)buildQuests();if(st.boss||st.pool)buildBoss();
   resetHearts();
   showRoom('story');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1164,6 +1127,7 @@ function showRoom(r){
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.room===r));
   document.querySelectorAll('.room').forEach(el=>el.classList.remove('on'));
   $('room-'+r).classList.add('on');
+  if(cur&&cur.pool){if(r==='boss')setHearts(5);else if(r==='quests')setHearts(3);}
 }
 
 /* ① story */
@@ -1329,6 +1293,7 @@ function buildVocab(){
 
 /* ④ quests */
 function buildQuests(){
+  if(cur.pool){buildQuestsPool();return;}
   const box=$('quests');box.innerHTML='';
   let cleared=0;const need=cur.quests.length;
   const questDone=()=>{cleared++;if(cleared>=need)markDone('quests');};
@@ -1402,8 +1367,323 @@ function buildChoice(blk,q,onClear){
   blk.append(p,pj,opts,status);
 }
 
+/* ═════════ POOL ENGINE — one tagged pool per stage, many formats ═════════
+   Stages with `pool:[...]` use the new system (quests auto-generated; boss = 7 questions / 3 phases / 5 hearts).
+   Stages without `pool` keep the legacy quests/boss untouched. */
+
+/* ── speech: TTS (Lumi reads) + recognition (Speaking Quest). Mic is ALWAYS optional. ── */
+function say(text,rate){try{
+  const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate||0.9;
+  const vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.indexOf('en')===0);
+  if(vs.length)u.voice=vs.find(v=>/Google US English|Samantha|Zira|Female/i.test(v.name))||vs[0];
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+}catch(e){}}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
+function listenOnce(onResult){
+  const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=4;
+  let got=false;
+  r.onresult=e=>{got=true;onResult([].map.call(e.results[0],a=>a.transcript));};
+  r.onerror=()=>{};
+  r.onend=()=>{if(!got)onResult([]);};
+  try{r.start();}catch(e){onResult([]);}
+  return r;
+}
+/* lenient normalizer: case/punctuation-insensitive, contractions unified */
+const CONTR={"i'm":"i am","im":"i am","you're":"you are","youre":"you are","he's":"he is","hes":"he is","she's":"she is","shes":"she is","it's":"it is","its":"it is","that's":"that is","thats":"that is","what's":"what is","whats":"what is","who's":"who is","whos":"who is","we're":"we are","they're":"they are","let's":"let us","lets":"let us","don't":"do not","dont":"do not","doesn't":"does not","doesnt":"does not","isn't":"is not","isnt":"is not","aren't":"are not","arent":"are not","can't":"can not","cant":"can not","cannot":"can not","won't":"will not","wont":"will not","didn't":"did not","didnt":"did not","wasn't":"was not","wasnt":"was not","weren't":"were not","werent":"were not"};
+function normEn(s){
+  s=String(s||'').toLowerCase().replace(/[\u2019\u2018\u00b4`]/g,"'");
+  s=s.replace(/[^a-z0-9'\s]/g,' ').replace(/\s+/g,' ').trim();
+  return s.split(' ').map(w=>CONTR[w]||w).join(' ');
+}
+function typedPass(said,item){const t=normEn(said);return (item.accept||[item.en]).some(a=>normEn(a)===t);}
+function fuzzyPass(alts,item){
+  const targets=(item.accept||[item.en]).map(normEn);
+  for(let k=0;k<alts.length;k++){const s=normEn(alts[k]);if(!s)continue;
+    for(let j=0;j<targets.length;j++){const t=targets[j];
+      if(s===t)return true;
+      const st=s.split(' '),tt=t.split(' '),bag={};
+      st.forEach(w=>bag[w]=(bag[w]||0)+1);
+      let hit=0;tt.forEach(w=>{if(bag[w]>0){bag[w]--;hit++;}});
+      if(hit/tt.length>=0.8&&st.length<=tt.length+3)return true;
+    }}
+  return false;
+}
+function poolChunks(it){return it.chunks||it.en.split(' ');}
+function sample(arr,n){return shuffled(arr).slice(0,n);}
+function reviewItems(n){
+  if(!cur.review)return[];
+  let all=[];cur.review.forEach(id=>{const s=STAGES.find(x=>x.id===id);if(s&&s.pool)all=all.concat(s.pool);});
+  return sample(all,n);
+}
+
+/* ── format renderers (one pool item → one exercise round) ── */
+function roundOrder(wrap,it,useTraps,onOk){
+  const jpP=document.createElement('p');jpP.className='boss-qjp show';jpP.style.textAlign='center';jpP.innerHTML=ruby(it.jp);
+  const tiles=document.createElement('div');tiles.className='q-tiles';
+  const line=document.createElement('div');line.className='q-line';
+  wrap.append(jpP,tiles,line);
+  const ans=poolChunks(it);
+  let arr=ans.slice();
+  if(useTraps&&it.traps)arr=arr.concat(it.traps);
+  arr=shuffled(arr);
+  if(arr.join('¦')===ans.join('¦')&&arr.length>2)arr=arr.slice(1).concat(arr[0]);
+  let pos=0,fin=false;
+  arr.forEach(t=>{
+    const b=document.createElement('button');b.className='q-tile';b.textContent=t;
+    b.addEventListener('click',()=>{
+      if(fin||b.classList.contains('picked'))return;
+      if(t===ans[pos]){b.classList.add('picked');line.textContent+=(pos?' ':'')+t;pos++;
+        if(pos>=ans.length){fin=true;line.textContent+='  ⭐';setTimeout(onOk,700);}
+      }else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),350);}
+    });
+    tiles.appendChild(b);
+  });
+}
+function roundChoice(wrap,it,onOk){
+  const ch=poolChunks(it),bi=it.blank.i,corr=ch[bi];
+  const p=document.createElement('p');p.className='boss-q';
+  p.textContent=ch.map((w,i)=>i===bi?'____':w).join(' ');
+  const pj=document.createElement('p');pj.className='boss-qjp show';pj.innerHTML=ruby(it.jp);
+  const opts=document.createElement('div');opts.className='boss-opts';
+  wrap.append(p,pj,opts);
+  let fin=false;
+  shuffled(it.blank.opts.slice()).forEach(t=>{
+    const b=document.createElement('button');b.textContent=t;
+    b.addEventListener('click',()=>{
+      if(fin)return;
+      if(t===corr){fin=true;b.classList.add('good');p.textContent=ch.join(' ')+'  ⭐';setTimeout(onOk,700);}
+      else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
+    });
+    opts.appendChild(b);
+  });
+}
+function roundListen(wrap,it,pool,onOk){
+  const play=document.createElement('button');play.className='say-btn';play.textContent='🔊 もういちど きく';
+  play.style.display='block';play.style.margin='0 auto 10px';
+  play.addEventListener('click',()=>say(it.en));
+  const opts=document.createElement('div');opts.className='boss-opts';
+  wrap.append(play,opts);
+  const wrongs=sample(pool.filter(x=>x!==it&&x.en!==it.en),2).map(x=>x.en);
+  let fin=false;
+  shuffled([it.en].concat(wrongs)).forEach(t=>{
+    const b=document.createElement('button');b.textContent=t;
+    b.addEventListener('click',()=>{
+      if(fin)return;
+      if(t===it.en){fin=true;b.classList.add('good');setTimeout(onOk,600);}
+      else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
+    });
+    opts.appendChild(b);
+  });
+  setTimeout(()=>say(it.en),300);
+}
+function roundFix(wrap,it,onOk){
+  const jpP=document.createElement('p');jpP.className='boss-qjp show';jpP.style.textAlign='center';jpP.innerHTML=ruby(it.jp);
+  const hint=document.createElement('p');hint.className='heard';hint.textContent='まちがっている ことばを タップ！';
+  const tiles=document.createElement('div');tiles.className='q-tiles';tiles.style.justifyContent='center';
+  const opts=document.createElement('div');opts.className='boss-opts';opts.style.marginTop='10px';
+  wrap.append(jpP,hint,tiles,opts);
+  const words=it.broken.split(' ');
+  let stage1=true,fin=false;
+  words.forEach((w,i)=>{
+    const b=document.createElement('button');b.className='q-tile';b.textContent=w;
+    b.addEventListener('click',()=>{
+      if(!stage1||fin)return;
+      if(i===it.fixIdx){
+        stage1=false;b.classList.add('fixword');
+        hint.textContent='みつけた！ただしい ことばは？';
+        shuffled([it.fix].concat(it.fixOpts||[])).forEach(o=>{
+          const ob=document.createElement('button');ob.textContent=o;
+          ob.addEventListener('click',()=>{
+            if(fin)return;
+            if(o===it.fix){fin=true;ob.classList.add('good');b.textContent=it.fix;b.className='q-tile good';hint.textContent='なおした！ ⭐ '+it.en;setTimeout(onOk,950);}
+            else{ob.classList.add('bad');loseHeart();setTimeout(()=>ob.classList.remove('bad'),380);}
+          });
+          opts.appendChild(ob);
+        });
+      }else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),350);}
+    });
+    tiles.appendChild(b);
+  });
+}
+function roundProd(wrap,it,onOk){
+  const p=document.createElement('p');p.className='boss-q';p.textContent='🗣️ フルセンテンスで！';
+  const pj=document.createElement('p');pj.className='boss-qjp show';
+  pj.innerHTML=ruby((it.hint?it.hint+'<br>':'')+'「'+it.jp+'」');
+  const skel=document.createElement('p');skel.className='bq-skel';
+  const ans=poolChunks(it);
+  skel.textContent=ans.map(w=>'＿'.repeat(Math.max(2,Math.min(w.replace(/[^A-Za-z']/g,'').length,6)))).join('  ');
+  const row=document.createElement('div');row.className='bq-inrow';
+  const inp=document.createElement('input');inp.className='bq-in';inp.type='text';
+  inp.autocapitalize='off';inp.autocomplete='off';inp.spellcheck=false;inp.placeholder='ここに えいごで かこう！';
+  row.appendChild(inp);
+  const heard=document.createElement('p');heard.className='heard';
+  let fin=false,reveal=0;
+  function win(){if(fin)return;fin=true;heard.innerHTML='⭐ <b>'+it.en+'</b>';setTimeout(onOk,950);}
+  function fail(pre){
+    loseHeart();reveal=Math.min(reveal+1,ans.length-1);
+    heard.innerHTML=pre+'ヒント: <b>'+ans.slice(0,reveal).join(' ')+' …</b>';
+    inp.classList.add('bad');setTimeout(()=>inp.classList.remove('bad'),400);
+  }
+  if(SR){
+    const mic=document.createElement('button');mic.className='mic-btn';mic.textContent='🎤';mic.title='声で答える / Speak!';
+    mic.addEventListener('click',()=>{
+      if(fin)return;
+      mic.classList.add('rec');heard.textContent='きいてるよ…';
+      listenOnce(alts=>{
+        mic.classList.remove('rec');
+        if(!alts.length){heard.textContent='（きこえなかった…マイクのちかくで、もういちど！）';return;}
+        inp.value=alts[0];
+        if(fuzzyPass(alts,it))win();
+        else fail('きこえたのは「'+alts[0]+'」。');
+      });
+    });
+    row.appendChild(mic);
+  }
+  const go=document.createElement('button');go.className='bq-go';go.textContent='✓';
+  go.addEventListener('click',()=>{
+    if(fin||!inp.value.trim())return;
+    typedPass(inp.value,it)?win():fail('もうすこし！');
+  });
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go.click();});
+  row.appendChild(go);
+  wrap.append(p,pj,skel,row,heard);
+}
+
+/* ── quests tab (pool stages): auto-generated, input-side practice ── */
+function buildRounds(blk,items,kind,onClear){
+  const dots=document.createElement('p');dots.className='round-dots';
+  const wrap=document.createElement('div');
+  const status=document.createElement('p');status.className='q-status';
+  blk.append(dots,wrap,status);
+  let i=0,done=false;
+  function next(){i++;if(i>=items.length){wrap.innerHTML='';dots.textContent='';status.textContent='クリア！ ⭐';if(!done){done=true;onClear();}return;}render();}
+  function render(){wrap.innerHTML='';dots.textContent='●'.repeat(i)+'○'.repeat(items.length-i);
+    const it=items[i];
+    if(kind==='choice')roundChoice(wrap,it,next);
+    else if(kind==='order')roundOrder(wrap,it,false,next);
+    else roundListen(wrap,it,cur.pool,next);
+  }
+  render();
+}
+function buildSpeaking(blk,items,onClear){
+  const wrap=document.createElement('div');
+  const status=document.createElement('p');status.className='q-status';
+  blk.append(wrap,status);
+  let i=0,fails=0,done=false;
+  function next(){i++;fails=0;if(i>=items.length){wrap.innerHTML='';status.textContent='クリア！ ⭐ こえの ゆうしゃだ！';if(!done){done=true;onClear();}return;}render();}
+  function render(){
+    const it=items[i];wrap.innerHTML='';
+    const dots=document.createElement('p');dots.className='round-dots';dots.textContent='●'.repeat(i)+'○'.repeat(items.length-i);
+    const p=document.createElement('p');p.className='boss-q';p.textContent=it.en;
+    const pj=document.createElement('p');pj.className='boss-qjp show';pj.innerHTML=ruby(it.jp);
+    const row=document.createElement('div');row.className='bq-inrow';row.style.justifyContent='center';
+    const lb=document.createElement('button');lb.className='say-btn';lb.textContent='🔊 おてほん';
+    lb.addEventListener('click',()=>say(it.en));
+    row.appendChild(lb);
+    const heard=document.createElement('p');heard.className='heard';
+    if(SR){
+      const mic=document.createElement('button');mic.className='mic-btn';mic.textContent='🎤 いってみる！';
+      mic.addEventListener('click',()=>{
+        mic.classList.add('rec');mic.textContent='🎤 きいてるよ…';
+        listenOnce(alts=>{
+          mic.classList.remove('rec');mic.textContent='🎤 いってみる！';
+          if(!alts.length){heard.textContent='（きこえなかった…マイクのちかくで、もういちど！）';return;}
+          if(fuzzyPass(alts,it)){heard.innerHTML='まほうじんに とどいた:<br><b>'+alts[0]+'</b> ⭐';setTimeout(next,1100);}
+          else{
+            fails++;heard.innerHTML='きこえたのは:<br><b>'+alts[0]+'</b><br>もういちど チャレンジ！';
+            if(fails===2){const sk=document.createElement('button');sk.className='q-retry';sk.textContent='つぎへ →';sk.addEventListener('click',next);wrap.appendChild(sk);}
+          }
+        });
+      });
+      row.appendChild(mic);
+    }else{
+      const ok=document.createElement('button');ok.className='say-btn';ok.textContent='✅ こえに だして よめたよ！';
+      ok.addEventListener('click',next);row.appendChild(ok);
+      heard.textContent='このブラウザでは マイクが つかえないから、じぶんの こえで チェック！';
+    }
+    wrap.append(dots,p,pj,row,heard);
+  }
+  render();
+}
+function buildQuestsPool(){
+  const box=$('quests');box.innerHTML='';
+  let cleared=0,need=0;
+  const questDone=()=>{cleared++;if(cleared>=need)markDone('quests');};
+  const mk=(title,jp)=>{const blk=document.createElement('div');blk.className='quest-block';
+    blk.innerHTML=`<p class="quest-title">⚔️ ${title}<span class="jp">${ruby(jp)}</span></p>`;
+    box.appendChild(blk);return blk;};
+  const P=cur.pool;
+  /* stage-specific fixed quests (e.g. Stage 0 alphabet) keep the legacy builders */
+  (cur.extraQuests||[]).forEach(q=>{
+    need++;const blk=mk(q.title,q.jp);
+    if(q.type==='order')buildOrder(blk,q,questDone);
+    else if(q.type==='pairs')buildPairs(blk,q,questDone);
+    else buildChoice(blk,q,questDone);
+  });
+  if(cur.vocab&&cur.vocab.length>=4){need++;
+    buildPairs(mk('Word Cards','ことばカード：おなじ意味(いみ)を マッチさせよう！'),
+      {pairs:sample(cur.vocab,6).map(v=>[v.w,noFuri(v.m)])},questDone);}
+  const bl=P.filter(i=>i.blank);
+  if(bl.length>=3){need++;buildRounds(mk('Spell Choice','ただしい ことばを えらぼう！'),sample(bl,Math.min(4,bl.length)),'choice',questDone);}
+  need++;buildRounds(mk('Spell Builder','ならべかえて 文(ぶん)を つくろう！'),sample(P.filter(i=>poolChunks(i).length>=3),3),'order',questDone);
+  const li=P.filter(i=>i.listen!==false);
+  if(li.length>=3){need++;buildRounds(mk('Lumi Says','ルミの こえを きいて、きこえた 文(ぶん)を えらぼう！'),sample(li,3),'listen',questDone);}
+  const si=P.filter(i=>i.speak);
+  if(si.length>=3){need++;buildSpeaking(mk('Speaking Quest','マイクに むかって、文(ぶん)を まるごと いってみよう！（まちがえても ハートは へらないよ）'),sample(si,3),questDone);}
+}
+
+/* ── boss (pool stages): 7 questions · 3 phases · 5 hearts ── */
+function buildBossPool(){
+  const panel=$('boss-panel');
+  const PH={1:{n:'PHASE 1 · GUARD',jp:'⚔️ ならべかえて 呪文(じゅもん)を つくれ！<b>にせの ことば</b>に 気(き)をつけて！'},
+            2:{n:'PHASE 2 · BREAK',jp:'🔨 こわれた 呪文(じゅもん)を なおせ！まちがいを タップ！'},
+            3:{n:'PHASE 3 · FINAL',jp:'✨ フルセンテンスで こたえろ！かいても、はなしても OK！'}};
+  let plan=[],qi=0;
+  function makePlan(){
+    const used=new Set();
+    const all=cur.pool.concat(reviewItems(3));
+    function take(list,n){const out=[];const sh=shuffled(list);
+      for(let k=0;k<sh.length&&out.length<n;k++){if(!used.has(sh[k])){used.add(sh[k]);out.push(sh[k]);}}
+      return out;}
+    plan=[]
+      .concat(take(all.filter(i=>i.traps&&poolChunks(i).length>=3&&poolChunks(i).length<=8),2).map(it=>({ph:1,it})))
+      .concat(take(all.filter(i=>i.broken),3).map(it=>({ph:2,it})))
+      .concat(take(all.filter(i=>i.accept&&poolChunks(i).length<=7),2).map(it=>({ph:3,it})));
+  }
+  function segCircle(lit){
+    const r=60,c=2*Math.PI*r,n=plan.length||7,seg=c/n,gap=5;
+    let out='<svg class="mcircle" viewBox="0 0 150 150">';
+    for(let i=0;i<n;i++)out+=`<circle class="seg ${i<lit?'lit':''}" cx="75" cy="75" r="${r}" stroke-dasharray="${seg-gap} ${c-seg+gap}" stroke-dashoffset="${-i*seg}"></circle>`;
+    return out+'</svg>';
+  }
+  function head(ph){
+    return `<p class="room-hint">👑 <b>${cur.bossName}</b><br>${ruby(cur.bossJp)}</p>`+
+      (ph?`<p class="phase-tag">${PH[ph].n}<span class="jp">${ruby(PH[ph].jp)}</span></p>`:'');
+  }
+  function ask(){
+    const q=plan[qi];
+    panel.innerHTML=head(q.ph)+`<div class="circle-wrap">${segCircle(qi)}</div><div id="bq-zone"></div>`;
+    const zone=panel.querySelector('#bq-zone');
+    const ok=()=>{qi++;qi>=plan.length?clearBoss():ask();};
+    if(q.ph===1)roundOrder(zone,q.it,true,ok);
+    else if(q.ph===2)roundFix(zone,q.it,ok);
+    else roundProd(zone,q.it,ok);
+  }
+  function clearBoss(){
+    markDone('boss');
+    panel.innerHTML=head(0)+`<div class="circle-wrap">${segCircle(plan.length)}</div>
+      <div class="boss-clear"><div class="big">🎉</div>
+      <p class="msg">${cur.clearMsg}</p><p class="msgjp">${ruby(cur.clearJp)}</p>
+      <button class="q-retry" id="boss-again" style="margin-top:12px;">↺ もう一度たたかう</button></div>`;
+    panel.querySelector('#boss-again').addEventListener('click',()=>{setHearts(5);start();});
+  }
+  function start(){makePlan();qi=0;ask();}
+  start();
+}
+
 /* ⑤ boss */
 function buildBoss(){
+  if(cur.pool){buildBossPool();return;}
   const panel=$('boss-panel');
   let tier='easy',qi=0,qs=[];
   function segCircle(lit){
