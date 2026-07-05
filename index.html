@@ -151,6 +151,19 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .stage-hearts .lost{opacity:.28;filter:grayscale(1);}
 
 
+
+/* ── SFX-era polish: bigger tap targets + flash ── */
+#room-quests .q-tile,#room-boss .q-tile{font-size:1.1rem;padding:13px 18px;}
+#room-quests .boss-opts button,#room-boss .boss-opts button{padding:16px 14px;font-size:1.08rem;}
+.q-retry{padding:12px 22px;font-size:1rem;}
+.bq-go{padding:14px 24px;font-size:1.2rem;}
+.mic-btn{padding:13px 17px;font-size:1.08rem;}
+.say-btn{padding:12px 18px;font-size:1.02rem;}
+.bq-in{padding:14px 13px;font-size:1.08rem;}
+.flashfx{position:fixed;inset:0;pointer-events:none;z-index:9999;background:radial-gradient(circle,rgba(255,246,200,.95),rgba(255,215,80,.55) 45%,rgba(255,255,255,0) 75%);opacity:0;animation:flashfx .6s ease-out forwards;}
+.flashfx.big{animation-duration:.9s;}
+@keyframes flashfx{0%{opacity:0;}18%{opacity:1;}100%{opacity:0;}}
+
 /* ── pool engine: phases, production input, speaking ── */
 .phase-tag{text-align:center;font-family:'Press Start 2P',monospace;font-size:.5rem;letter-spacing:.08em;color:var(--gold-deep);margin:2px 0 10px;}
 .phase-tag .jp{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.78rem;font-weight:700;margin-top:5px;color:var(--brown);}
@@ -1051,6 +1064,7 @@ function setHearts(n){maxHearts=n;hearts=n;renderHearts();}
 function resetHearts(){setHearts(3);}
 function loseHeart(){
   if(hearts<=0)return;
+  sfxBad();
   hearts--;renderHearts();
   if(hearts<=0)showGameOver();
 }
@@ -1320,8 +1334,8 @@ function buildOrder(blk,q,onClear){
     arr.forEach(t=>{
       const b=document.createElement('button');b.className='q-tile';b.textContent=t;
       b.addEventListener('click',()=>{
-        if(t===q.answer[pos]){b.classList.add('picked');line.textContent+=(pos?' ':'')+t;pos++;
-          if(pos>=q.answer.length){status.textContent='クリア！ ⭐ '+q.answer.join(' ');if(!done){done=true;onClear();}}
+        if(t===q.answer[pos]){sfxTap();b.classList.add('picked');line.textContent+=(pos?' ':'')+t;pos++;
+          if(pos>=q.answer.length){status.textContent='クリア！ ⭐ '+q.answer.join(' ');sfxGood();flashFX(false);if(!done){done=true;onClear();}}
         }else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),350);}
       });
       tiles.appendChild(b);
@@ -1340,10 +1354,10 @@ function buildPairs(blk,q,onClear){
     const b=document.createElement('button');b.className='q-tile';b.textContent=it.t;b.dataset.k=it.k;
     b.addEventListener('click',()=>{
       if(b.classList.contains('good'))return;
-      if(!sel){sel=b;b.classList.add('picked');b.style.opacity='1';return;}
+      if(!sel){sfxTap();sel=b;b.classList.add('picked');b.style.opacity='1';return;}
       if(sel===b){sel.classList.remove('picked');sel=null;return;}
-      if(sel.dataset.k===b.dataset.k){sel.classList.remove('picked');sel.classList.add('good');b.classList.add('good');sel=null;solved++;
-        if(solved>=q.pairs.length){status.textContent='クリア！ ⭐';if(!done){done=true;onClear();}}
+      if(sel.dataset.k===b.dataset.k){sfxGood();sel.classList.remove('picked');sel.classList.add('good');b.classList.add('good');sel=null;solved++;
+        if(solved>=q.pairs.length){status.textContent='クリア！ ⭐';flashFX(false);if(!done){done=true;onClear();}}
       }else{b.classList.add('bad');loseHeart();const s=sel;sel=null;setTimeout(()=>{b.classList.remove('bad');s.classList.remove('picked');},380);}
     });
     tiles.appendChild(b);
@@ -1359,7 +1373,7 @@ function buildChoice(blk,q,onClear){
   shuffled(q.opts.map((t,i)=>({t,i}))).forEach(o=>{
     const b=document.createElement('button');b.textContent=o.t;
     b.addEventListener('click',()=>{
-      if(o.i===q.correct){b.classList.add('good');status.textContent='クリア！ ⭐';if(!done){done=true;onClear();}}
+      if(o.i===q.correct){b.classList.add('good');sfxGood();flashFX(false);status.textContent='クリア！ ⭐';if(!done){done=true;onClear();}}
       else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
     });
     opts.appendChild(b);
@@ -1370,6 +1384,19 @@ function buildChoice(blk,q,onClear){
 /* ═════════ POOL ENGINE — one tagged pool per stage, many formats ═════════
    Stages with `pool:[...]` use the new system (quests auto-generated; boss = 7 questions / 3 phases / 5 hearts).
    Stages without `pool` keep the legacy quests/boss untouched. */
+
+/* ── SFX: tiny Web-Audio tones, no files needed ── */
+let _actx=null,_sfxg=null;
+function _ac(){if(!_actx){try{_actx=new (window.AudioContext||window.webkitAudioContext)();_sfxg=_actx.createGain();_sfxg.gain.value=0.55;_sfxg.connect(_actx.destination);}catch(e){}}if(_actx&&_actx.state==='suspended')_actx.resume();return _actx;}
+document.addEventListener('pointerdown',()=>_ac(),{once:true});
+function sfxTone(f,type,dur,vol,delay,f2){try{const c=_ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(_sfxg);o.type=type;const t0=c.currentTime+(delay||0);o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.start(t0);o.stop(t0+dur+.05);}catch(e){}}
+const sfxTap =()=>sfxTone(520,'sine',.05,.16);
+const sfxKey =()=>sfxTone(760,'triangle',.03,.07);
+const sfxGood=()=>{sfxTone(660,'sine',.09,.2);sfxTone(990,'sine',.1,.16,.06);};
+const sfxBad =()=>sfxTone(200,'square',.16,.14,0,130);
+const sfxStar=()=>{[523,659,784,1047].forEach((f,i)=>sfxTone(f,'sine',.16,.2,i*.07));};
+const sfxFlashS=()=>sfxTone(1100,'sine',.35,.14,0,2300);
+function flashFX(big){const d=document.createElement('div');d.className='flashfx'+(big?' big':'');document.body.appendChild(d);if(big){sfxStar();sfxFlashS();}else sfxFlashS();setTimeout(()=>d.remove(),big?950:650);}
 
 /* ── speech: TTS (Lumi reads) + recognition (Speaking Quest). Mic is ALWAYS optional. ── */
 function say(text,rate){try{
@@ -1432,8 +1459,8 @@ function roundOrder(wrap,it,useTraps,onOk){
     const b=document.createElement('button');b.className='q-tile';b.textContent=t;
     b.addEventListener('click',()=>{
       if(fin||b.classList.contains('picked'))return;
-      if(t===ans[pos]){b.classList.add('picked');line.textContent+=(pos?' ':'')+t;pos++;
-        if(pos>=ans.length){fin=true;line.textContent+='  ⭐';setTimeout(onOk,700);}
+      if(t===ans[pos]){sfxTap();b.classList.add('picked');line.textContent+=(pos?' ':'')+t;pos++;
+        if(pos>=ans.length){fin=true;line.textContent+='  ⭐';sfxGood();flashFX(false);setTimeout(onOk,700);}
       }else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),350);}
     });
     tiles.appendChild(b);
@@ -1451,7 +1478,7 @@ function roundChoice(wrap,it,onOk){
     const b=document.createElement('button');b.textContent=t;
     b.addEventListener('click',()=>{
       if(fin)return;
-      if(t===corr){fin=true;b.classList.add('good');p.textContent=ch.join(' ')+'  ⭐';setTimeout(onOk,700);}
+      if(t===corr){fin=true;b.classList.add('good');sfxGood();flashFX(false);p.textContent=ch.join(' ')+'  ⭐';setTimeout(onOk,700);}
       else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
     });
     opts.appendChild(b);
@@ -1460,7 +1487,7 @@ function roundChoice(wrap,it,onOk){
 function roundListen(wrap,it,pool,onOk){
   const play=document.createElement('button');play.className='say-btn';play.textContent='🔊 もういちど きく';
   play.style.display='block';play.style.margin='0 auto 10px';
-  play.addEventListener('click',()=>say(it.en));
+  play.addEventListener('click',()=>{sfxTap();say(it.en);});
   const opts=document.createElement('div');opts.className='boss-opts';
   wrap.append(play,opts);
   const wrongs=sample(pool.filter(x=>x!==it&&x.en!==it.en),2).map(x=>x.en);
@@ -1469,7 +1496,7 @@ function roundListen(wrap,it,pool,onOk){
     const b=document.createElement('button');b.textContent=t;
     b.addEventListener('click',()=>{
       if(fin)return;
-      if(t===it.en){fin=true;b.classList.add('good');setTimeout(onOk,600);}
+      if(t===it.en){fin=true;b.classList.add('good');sfxGood();flashFX(false);setTimeout(onOk,600);}
       else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
     });
     opts.appendChild(b);
@@ -1489,13 +1516,13 @@ function roundFix(wrap,it,onOk){
     b.addEventListener('click',()=>{
       if(!stage1||fin)return;
       if(i===it.fixIdx){
-        stage1=false;b.classList.add('fixword');
+        stage1=false;b.classList.add('fixword');sfxGood();
         hint.textContent='みつけた！ただしい ことばは？';
         shuffled([it.fix].concat(it.fixOpts||[])).forEach(o=>{
           const ob=document.createElement('button');ob.textContent=o;
           ob.addEventListener('click',()=>{
             if(fin)return;
-            if(o===it.fix){fin=true;ob.classList.add('good');b.textContent=it.fix;b.className='q-tile good';hint.textContent='なおした！ ⭐ '+it.en;setTimeout(onOk,950);}
+            if(o===it.fix){fin=true;ob.classList.add('good');sfxGood();flashFX(false);b.textContent=it.fix;b.className='q-tile good';hint.textContent='なおした！ ⭐ '+it.en;setTimeout(onOk,950);}
             else{ob.classList.add('bad');loseHeart();setTimeout(()=>ob.classList.remove('bad'),380);}
           });
           opts.appendChild(ob);
@@ -1517,11 +1544,12 @@ function roundProd(wrap,it,onOk){
   inp.autocapitalize='off';inp.autocomplete='off';inp.spellcheck=false;inp.placeholder='ここに えいごで かこう！';
   row.appendChild(inp);
   const heard=document.createElement('p');heard.className='heard';
-  let fin=false,reveal=0;
-  function win(){if(fin)return;fin=true;heard.innerHTML='⭐ <b>'+it.en+'</b>';setTimeout(onOk,950);}
+  let fin=false;
+  function win(){if(fin)return;fin=true;heard.innerHTML='⭐ <b>'+it.en+'</b>';sfxGood();flashFX(false);setTimeout(onOk,950);}
   function fail(pre){
-    loseHeart();reveal=Math.min(reveal+1,ans.length-1);
-    heard.innerHTML=pre+'ヒント: <b>'+ans.slice(0,reveal).join(' ')+' …</b>';
+    loseHeart();
+    heard.innerHTML=pre+'こたえは: <b>'+it.en+'</b><br>みて、そのまま かいて（いって）みよう！';
+    skel.textContent=it.en;skel.style.letterSpacing='.02em';
     inp.classList.add('bad');setTimeout(()=>inp.classList.remove('bad'),400);
   }
   if(SR){
@@ -1544,7 +1572,7 @@ function roundProd(wrap,it,onOk){
     if(fin||!inp.value.trim())return;
     typedPass(inp.value,it)?win():fail('もうすこし！');
   });
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go.click();});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go.click();else sfxKey();});
   row.appendChild(go);
   wrap.append(p,pj,skel,row,heard);
 }
@@ -1578,7 +1606,7 @@ function buildSpeaking(blk,items,onClear){
     const pj=document.createElement('p');pj.className='boss-qjp show';pj.innerHTML=ruby(it.jp);
     const row=document.createElement('div');row.className='bq-inrow';row.style.justifyContent='center';
     const lb=document.createElement('button');lb.className='say-btn';lb.textContent='🔊 おてほん';
-    lb.addEventListener('click',()=>say(it.en));
+    lb.addEventListener('click',()=>{sfxTap();say(it.en);});
     row.appendChild(lb);
     const heard=document.createElement('p');heard.className='heard';
     if(SR){
@@ -1588,7 +1616,7 @@ function buildSpeaking(blk,items,onClear){
         listenOnce(alts=>{
           mic.classList.remove('rec');mic.textContent='🎤 いってみる！';
           if(!alts.length){heard.textContent='（きこえなかった…マイクのちかくで、もういちど！）';return;}
-          if(fuzzyPass(alts,it)){heard.innerHTML='まほうじんに とどいた:<br><b>'+alts[0]+'</b> ⭐';setTimeout(next,1100);}
+          if(fuzzyPass(alts,it)){heard.innerHTML='まほうじんに とどいた:<br><b>'+alts[0]+'</b> ⭐';sfxGood();flashFX(false);setTimeout(next,1100);}
           else{
             fails++;heard.innerHTML='きこえたのは:<br><b>'+alts[0]+'</b><br>もういちど チャレンジ！';
             if(fails===2){const sk=document.createElement('button');sk.className='q-retry';sk.textContent='つぎへ →';sk.addEventListener('click',next);wrap.appendChild(sk);}
@@ -1670,7 +1698,7 @@ function buildBossPool(){
     else roundProd(zone,q.it,ok);
   }
   function clearBoss(){
-    markDone('boss');
+    markDone('boss');flashFX(true);
     panel.innerHTML=head(0)+`<div class="circle-wrap">${segCircle(plan.length)}</div>
       <div class="boss-clear"><div class="big">🎉</div>
       <p class="msg">${cur.clearMsg}</p><p class="msgjp">${ruby(cur.clearJp)}</p>
@@ -1725,14 +1753,14 @@ function buildBoss(){
     shuffled(q.opts.map((t,i)=>({t,i}))).forEach(o=>{
       const b=document.createElement('button');b.textContent=o.t;
       b.addEventListener('click',()=>{
-        if(o.i===q.c){b.classList.add('good');setTimeout(()=>{qi++;qi>=6?clearBoss():ask();},520);}
+        if(o.i===q.c){b.classList.add('good');sfxGood();setTimeout(()=>{qi++;qi>=6?clearBoss():ask();},520);}
         else{b.classList.add('bad');loseHeart();setTimeout(()=>b.classList.remove('bad'),380);}
       });
       opts.appendChild(b);
     });
   }
   function clearBoss(){
-    markDone('boss');
+    markDone('boss');flashFX(true);
     panel.innerHTML=head()+`<div class="circle-wrap">${segCircle(6)}</div>
       <div class="boss-clear"><div class="big">🎉</div>
       <p class="msg">${cur.clearMsg}</p>
