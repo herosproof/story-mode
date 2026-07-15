@@ -17,7 +17,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{font-family:'Fredoka','Kosugi Maru','Zen Maru Gothic',sans-serif;background:var(--bg);color:var(--cream);min-height:100vh;overflow-x:hidden;}
+body{font-family:'Fredoka','Kosugi Maru','Zen Maru Gothic',sans-serif;background:var(--bg);color:var(--cream);min-height:100vh;overflow-x:hidden;overflow-x:clip;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
 :focus-visible{outline:3px solid var(--gold-light);outline-offset:2px;border-radius:6px;}
@@ -26,9 +26,8 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .starfield{position:fixed;inset:0;pointer-events:none;z-index:0;}
 .starfield span{position:absolute;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s);font-size:var(--sz,1rem);color:var(--col,#fde68a);text-shadow:0 0 6px var(--col,#fde68a);line-height:1;}
 @keyframes twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0deg)}50%{opacity:.9;transform:scale(1) rotate(20deg)}}
-.page{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 16px 80px;}
-.story-header{text-align:center;padding:18px 0 26px;position:relative;text-decoration:none;display:block;cursor:pointer;transition:opacity .2s;}
-.story-header:hover{opacity:.85;}
+.page{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 16px 120px;}
+.story-header{text-align:center;padding:18px 0 26px;position:relative;display:block;}
 .story-header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:220px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
 .hp-logo{max-height:96px;max-width:80%;object-fit:contain;display:block;margin:0 auto 12px;filter:drop-shadow(0 2px 14px rgba(167,139,250,.5));}
 .story-eyebrow{font-family:'Press Start 2P',monospace;font-size:clamp(.42rem,1.9vw,.58rem);color:var(--gold-light);letter-spacing:.18em;opacity:.75;margin-bottom:14px;text-shadow:0 0 20px rgba(240,208,96,.4);}
@@ -48,8 +47,23 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .stage-name{font-size:1.24rem;font-weight:800;color:var(--text-dark);line-height:1.3;text-shadow:0 0 5px #f5eedc,0 0 10px #f5eedc,0 0 4px #f5eedc;}
 .stage-name .jp{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.92rem;font-weight:700;color:var(--text-soft);margin-top:2px;text-shadow:0 0 5px #f5eedc,0 0 9px #f5eedc;}
 .stage-gram{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.86rem;font-weight:700;color:#5c2810;margin-top:9px;line-height:1.6;text-shadow:0 0 5px #f5eedc,0 0 9px #f5eedc;}
-.stage-stars{margin-top:11px;font-size:1.05rem;letter-spacing:.12em;text-shadow:0 0 6px #f5eedc;}
-.stage-stars .off{opacity:.22;}
+.stage-stars{margin-top:11px;font-size:1.1rem;letter-spacing:.12em;position:relative;z-index:2;text-shadow:0 1px 4px rgba(0,0,0,.55);}
+.stage-stars .off{opacity:.4;}
+/* dark gradient behind the stars so they pop against the cream card */
+.stage-card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:62px;background:linear-gradient(180deg,rgba(20,12,38,0),rgba(20,12,38,.32) 45%,rgba(20,12,38,.6));pointer-events:none;}
+
+/* ── goal dock: pinned bottom bar (goal + hearts + BGM) ── */
+.goal-dock{position:fixed;left:0;right:0;bottom:0;z-index:1450;display:flex;align-items:center;gap:12px;padding:9px 14px calc(9px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(30,18,53,.96),rgba(20,12,38,.98));border-top:1px solid rgba(201,160,48,.4);box-shadow:0 -6px 24px rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.dock-goal{flex:1;min-width:0;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.8rem;font-weight:700;color:var(--gold-pale);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.goal-dock .stage-hearts{margin:0;font-size:1.15rem;letter-spacing:.06em;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));flex:0 0 auto;}
+.goal-dock .stage-hearts .lost{opacity:.28;filter:grayscale(1);}
+.dock-bgm-slot{flex:0 0 auto;display:flex;}
+.goal-dock .bgm-ctrl{position:static;box-shadow:none;background:transparent;border:none;padding:0;backdrop-filter:none;-webkit-backdrop-filter:none;}
+body.in-stage .page{padding-bottom:calc(var(--dock-h,72px) + 46px);}
+@media(max-width:560px){
+  .goal-dock{flex-wrap:wrap;gap:5px 12px;padding-top:7px;}
+  .dock-goal{flex:1 1 100%;font-size:.72rem;line-height:1.5;}
+}
 
 /* ── stage view ── */
 .stageview{display:none;}
@@ -59,7 +73,7 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .btn-back:hover{color:var(--gold-light);border-color:rgba(245,158,11,.45);}
 .sv-title{font-size:1.15rem;font-weight:700;color:var(--gold-light);}
 .sv-title .jp{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.92rem;color:var(--purple-light);margin-left:8px;}
-.room-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.room-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:6px;z-index:120;background:rgba(30,18,53,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(201,160,48,.22);border-radius:16px;padding:7px;box-shadow:0 4px 18px rgba(0,0,0,.35);}
 .room-tabs button{flex:1 1 auto;min-width:104px;background:rgba(20,12,38,.5);border:1px solid rgba(201,160,48,.3);color:var(--purple-light);border-radius:14px;padding:9px 8px;font-size:.82rem;font-weight:600;line-height:1.3;transition:background .2s,color .2s;}
 .room-tabs button small{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.72rem;opacity:.8;font-weight:500;}
 .room-tabs button.active{background:linear-gradient(135deg,var(--gold-deep),var(--gold));color:#fff7e0;border-color:var(--gold-deep);}
@@ -77,7 +91,40 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .beat .en .who{font-weight:700;color:#6f44a0;}
 .beat .jp{display:none;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.9rem;color:rgba(70,48,30,.92);line-height:1.9;margin-top:6px;}
 .beat.showjp .jp{display:block;}
-.lang-row{text-align:center;margin:0 0 14px;}
+.lang-row{text-align:center;margin:0 0 14px;position:sticky;top:calc(var(--tabs-h,56px) + 16px);z-index:40;pointer-events:none;}
+.lang-row .vn-btn{pointer-events:auto;box-shadow:0 3px 12px rgba(0,0,0,.4);}
+
+/* ── end-of-room "next" buttons (guided ①→⑤ flow) ── */
+.btn-next-room{display:block;margin:22px auto 4px;background:linear-gradient(135deg,var(--purple),var(--purple-light));color:#fff;border:none;border-radius:16px;padding:14px 26px;font-weight:700;font-size:1.02rem;line-height:1.4;box-shadow:0 4px 14px rgba(144,96,192,.45);text-align:center;transition:transform .15s;}
+.btn-next-room:active{transform:scale(.96);}
+.btn-next-room .sub{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.8rem;font-weight:600;opacity:.92;margin-top:2px;}
+.btn-next-room[disabled]{background:linear-gradient(135deg,var(--gold-deep),var(--gold));opacity:.95;}
+
+/* ── continue button + start-here badge (stage select) ── */
+#continue-row{text-align:center;margin:0 0 18px;}
+.btn-continue{background:linear-gradient(135deg,var(--purple),var(--purple-light));color:#fff;border:none;border-radius:40px;padding:12px 26px;font-size:.95rem;font-weight:700;line-height:1.5;box-shadow:0 4px 16px rgba(144,96,192,.45);transition:transform .15s;}
+.btn-continue:active{transform:scale(.96);}
+.btn-continue .jp{display:block;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.78rem;font-weight:600;opacity:.9;}
+.start-badge{display:inline-block;position:relative;z-index:2;margin-top:10px;background:linear-gradient(135deg,var(--gold-deep),var(--gold));color:#fff7e0;font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-weight:700;font-size:.82rem;border-radius:30px;padding:6px 14px;animation:pulseBadge 1.6s ease-in-out infinite;box-shadow:0 3px 10px rgba(0,0,0,.3);}
+@keyframes pulseBadge{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* ── stage locks: reading the previous stage's story is the key 🔑 ── */
+.stage-card.locked{filter:grayscale(.9);opacity:.62;}
+.stage-card.locked:hover{transform:none;box-shadow:none;}
+.stage-card .lock-badge{position:absolute;top:10px;right:12px;z-index:3;font-size:1.35rem;filter:drop-shadow(0 2px 5px rgba(0,0,0,.55));}
+@keyframes lockShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.stage-card.deny{animation:lockShake .3s ease 2;}
+#lock-toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);z-index:1600;background:rgba(30,18,53,.97);border:1px solid rgba(201,160,48,.5);color:var(--gold-pale);font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-weight:700;font-size:.85rem;border-radius:16px;padding:12px 18px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:88vw;text-align:center;line-height:1.7;}
+#lock-toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* ── explicit mini home button (header itself is no longer a link) ── */
+.btn-home-mini{position:absolute;top:14px;right:16px;z-index:10;font-size:1rem;text-decoration:none;background:rgba(20,12,38,.6);border:1px solid rgba(201,160,48,.35);border-radius:12px;padding:8px 12px;color:var(--gold-pale);line-height:1;transition:background .2s;}
+.btn-home-mini:hover{background:rgba(74,56,112,.9);}
+
+/* ── star-goal counters (spells / vocab) ── */
+.star-count{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.84rem;font-weight:700;color:var(--gold-deep);text-align:center;margin:2px 0 12px;line-height:1.6;}
+.star-count b{color:var(--brown);font-size:1.05em;}
+.vocab-grid .star-count,.vocab-grid .heard{grid-column:1/-1;}
 .vn-btn{background:rgba(20,12,38,.8);border:1px solid rgba(201,160,48,.45);color:var(--gold-pale);border-radius:10px;padding:6px 12px;font-size:.72rem;font-weight:600;letter-spacing:.04em;transition:background .2s,transform .15s;}
 .vn-btn:hover{background:rgba(74,56,112,.9);}
 .vn-btn:active{transform:scale(.95);}
@@ -145,6 +192,10 @@ ruby rt{font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;font-size:.52em;c
 .bgm-toggle:active{transform:scale(.9);}
 .bgm-vol{width:88px;height:5px;accent-color:var(--gold);cursor:pointer;}
 @media(max-width:480px){.bgm-vol{width:66px;}}
+@media(max-width:560px){
+  .room-tabs button{min-width:0;font-size:.68rem;padding:7px 3px;border-radius:10px;}
+  .room-tabs button small{font-size:.6rem;}
+}
 
 /* ── hearts (quests + boss lives) ── */
 .stage-hearts{text-align:center;font-size:1.5rem;letter-spacing:.14em;margin:-4px 0 14px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
@@ -324,20 +375,23 @@ footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgb
   .boss-q,.quest-title{font-size:1.12rem;}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01s!important;}html{scroll-behavior:auto;}}
+[hidden]{display:none!important;}
 </style>
 </head>
 <body>
 <div class="starfield" id="starfield"></div>
 <div class="page">
 
-  <a class="story-header" href="https://herosproof.github.io">
+  <a class="btn-home-mini" href="https://herosproof.github.io" aria-label="Home / ホーム">🏠 ホーム</a>
+  <div class="story-header">
     <img class="hp-logo" src="logo.png" alt="Hero's Proof" onerror="this.style.display='none'">
     <p class="story-eyebrow">✦ Hero's Proof · 勇者の証 ✦</p>
     <h1 class="story-title">Story Mode<span class="jp">ストーリーモード</span></h1>
-  </a>
+  </div>
 
   <!-- ══ STAGE SELECT ══ -->
   <section id="select-view">
+    <div id="continue-row"></div>
     <div class="stage-grid" id="stage-grid"></div>
   </section>
 
@@ -351,7 +405,6 @@ footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgb
       <span class="goal-label">🎯 GOAL 目標</span>
       <span class="goal-text" id="sv-goal-text"></span>
     </div>
-    <div class="stage-hearts" id="sv-hearts" hidden></div>
     <div class="room-tabs" id="room-tabs">
       <button data-room="story">📖 Story<small>物語</small></button>
       <button data-room="spells">🔍 Key Spells<small>呪文解析</small></button>
@@ -394,6 +447,14 @@ footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgb
   </div>
 
   <!-- ══ BGM CONTROL ══ -->
+  <!-- ══ GOAL DOCK: pinned to the bottom of the screen during a stage —
+       the 🎯 goal stays visible at all times, with hearts + music controls beside it ══ -->
+  <div class="goal-dock" id="goal-dock" hidden>
+    <span class="dock-goal" id="dock-goal"></span>
+    <div class="stage-hearts" id="sv-hearts" hidden></div>
+    <span class="dock-bgm-slot" id="dock-bgm-slot"></span>
+  </div>
+
   <div class="bgm-ctrl" id="bgm-ctrl" aria-label="Background music">
     <button class="bgm-toggle" id="bgm-toggle" type="button" aria-label="Music on / off" title="Music on / off">🔊</button>
     <input class="bgm-vol" id="bgm-vol" type="range" min="0" max="100" value="25" aria-label="Music volume">
@@ -839,53 +900,115 @@ const store={
 };
 let cur=null,room='story';
 
-/* ── hearts: shared lives for Quests + Boss. In-memory only, so a refresh resets them (low stakes). ── */
-let maxHearts=3,hearts=3; /* quests: 3 · pool-boss battles: 5 */
+/* ── hearts: per-room lives (Quests: 3 · pool Boss: 5), REMEMBERED per room for the
+     whole stage visit — switching tabs no longer refills them. In-memory only,
+     so a page refresh still resets (low stakes). ── */
+let maxHearts=3,hearts=3,roomHearts={};
 function stageHasChallenges(){return cur&&(cur.quests||cur.boss||cur.pool);}
 function renderHearts(){
   const el=$('sv-hearts');if(!el)return;
-  if(!stageHasChallenges()){el.hidden=true;return;}
+  /* only meaningful while actually in a challenge room */
+  if(!stageHasChallenges()||(room!=='quests'&&room!=='boss')){el.hidden=true;return;}
   el.hidden=false;
   let h='';for(let i=0;i<maxHearts;i++)h+=i<hearts?'❤️':'<span class="lost">🤍</span>';
   el.innerHTML=h;
 }
-function setHearts(n){maxHearts=n;hearts=n;renderHearts();}
-function resetHearts(){setHearts(3);}
+function initHearts(){
+  const bossMax=(cur&&cur.pool)?5:3;
+  roomHearts={quests:{max:3,left:3},boss:{max:bossMax,left:bossMax}};
+  maxHearts=3;hearts=3;renderHearts();
+}
+function syncRoomHearts(r){
+  const h=roomHearts[r];if(!h)return;
+  maxHearts=h.max;hearts=h.left;
+}
+function setHearts(n){ /* refill the CURRENT room to n */
+  maxHearts=n;hearts=n;
+  if(roomHearts[room])roomHearts[room]={max:n,left:n};
+  renderHearts();
+}
 function loseHeart(){
   if(hearts<=0)return;
   sfxBad();
-  hearts--;renderHearts();
+  hearts--;
+  if(roomHearts[room])roomHearts[room].left=hearts;
+  renderHearts();
   if(hearts<=0)showGameOver();
 }
 function showGameOver(){$('gameover').classList.remove('hide');}
 $('gameover-btn').addEventListener('click',()=>{
   $('gameover').classList.add('hide');
-  if(cur)openStage(cur); /* refresh the stage: hearts refill, back to the top — keeps BGM playing */
-  else{$('stage-view').classList.remove('on');$('select-view').style.display='';buildStageGrid();}
+  /* gentle retry: refill hearts IN PLACE — same tab, same scroll position,
+     every cleared quest stays cleared. No progress is ever wiped. */
+  setHearts(maxHearts);
 });
 
 
 /* stage select */
 /* Background art per stage (assets/bg/<name>.jpg). Edit freely — missing files just don't show. */
 const STAGE_BG={0:'classroom',1:'magic-space',2:'magic-space',3:'castle',4:'castle',5:'forest',6:'forest',7:'mountain',8:'mountain',9:'sky',10:'sky',11:'magic-space'};
+/* ── stage locking: the key 🔑 to each stage is finishing the PREVIOUS stage's
+     story (the 📖よんだ！ button = the story star). Teachers can toggle all
+     locks off via the hidden footer long-press menu. ── */
+function storyRead(id){const d=store.get('stage'+id)||{};return !!d.story;}
+function unlockAllOn(){return !!store.get('unlockAll');}
+function isUnlocked(i){
+  if(i<=0)return true;
+  if(unlockAllOn())return true;
+  return storyRead(STAGES[i-1].id);
+}
+let lockToastTimer=null;
+function lockToast(prevStage){
+  let t=$('lock-toast');
+  if(!t){t=document.createElement('div');t.id='lock-toast';document.body.appendChild(t);}
+  t.innerHTML=ruby(`🔒 STAGE ${prevStage.id} の ものがたりを さいごまで よむと カギが あくよ！📖`);
+  t.classList.add('show');
+  clearTimeout(lockToastTimer);
+  lockToastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
 function buildStageGrid(){
   const grid=$('stage-grid');grid.innerHTML='';
-  STAGES.forEach(st=>{
+  STAGES.forEach((st,i)=>{
     const done=store.get('stage'+st.id)||{};
     const rooms=(st.spells||st.pool)?['story','spells','vocab','quests','boss']:['story'];
     const stars=rooms.map(r=>done[r]?'⭐':'<span class="off">⭐</span>').join('');
+    const locked=!isUnlocked(i);
     const b=document.createElement('button');
-    b.className='stage-card';b.style.setProperty('--sc',st.accent);
+    b.className='stage-card'+(locked?' locked':'');b.style.setProperty('--sc',st.accent);
     const bg=STAGE_BG[st.id];
     b.innerHTML=`${bg?`<img class="stage-bg" src="${ASSET}bg/${bg}.jpg" alt="" onerror="this.remove()">`:''}
+      ${locked?'<div class="lock-badge">🔒</div>':''}
       <div class="stage-num">STAGE ${st.id}</div>
       <div class="stage-name">${st.nameEn}<span class="jp">${ruby(st.nameJp)}</span></div>
       <div class="stage-gram">🔑 ${ruby(st.gram)}</div>
       <div class="stage-stars">${stars}</div>
       ${(st.spells||st.pool)?'':`<div class="stage-note">📖 ${ruby('ものがたり公開中(こうかいちゅう)・クエストは準備中(じゅんびちゅう)！')}</div>`}`;
-    b.addEventListener('click',()=>openStage(st));
+    if(store.get('last')==null&&st.id===STAGES[0].id){
+      const badge=document.createElement('div');badge.className='start-badge';badge.textContent='▶ ここから スタート！';
+      b.appendChild(badge);
+    }
+    b.addEventListener('click',()=>{
+      if(!isUnlocked(i)){ /* re-check live: may have unlocked since render */
+        b.classList.add('deny');setTimeout(()=>b.classList.remove('deny'),700);
+        lockToast(STAGES[i-1]);
+        return;
+      }
+      openStage(st);
+    });
     grid.appendChild(b);
   });
+  buildContinueRow();
+}
+/* ── つづきから: jump straight back to the last-opened stage ── */
+function buildContinueRow(){
+  const row=$('continue-row');if(!row)return;row.innerHTML='';
+  const st=STAGES.find(s=>s.id===store.get('last'));
+  if(!st)return;
+  const b=document.createElement('button');b.className='btn-continue';b.type='button';
+  b.innerHTML=`▶ つづきから — <b>STAGE ${st.id} · ${st.nameEn}</b><span class="jp">${noFuri(st.nameJp)}</span>`;
+  b.addEventListener('click',()=>openStage(st));
+  row.appendChild(b);
 }
 buildStageGrid();
 
@@ -904,34 +1027,99 @@ function openStage(st){
   $('stage-view').classList.add('on');
   $('sv-title').innerHTML=`STAGE ${st.id} · ${st.nameEn}<span class="jp">${noFuri(st.nameJp)}</span>`;
   $('sv-goal-text').innerHTML=noFuri(st.gram);
+  $('dock-goal').innerHTML='🎯 '+noFuri(st.gram);
+  enterStageUI();
   const done=store.get('stage'+st.id)||{};
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('done',!!done[b.dataset.room]));
   const has={story:true,spells:!!st.spells,vocab:!!st.vocab,quests:!!(st.quests||st.pool),boss:!!(st.boss||st.pool)};
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('locked',!has[b.dataset.room]));
   buildStory();
   if(st.spells)buildSpells();if(st.vocab)buildVocab();if(st.quests||st.pool)buildQuests();if(st.boss||st.pool)buildBoss();
-  resetHearts();
+  addRoomNav(has); /* guided ①→⑤ flow: a big "next" button at the end of each room */
+  initHearts();
   showRoom('story');
   window.scrollTo({top:0,behavior:'smooth'});
-  markDone('story'); /* opening the chapter counts as reading it */
-  document.querySelector('#room-tabs button[data-room="story"]').classList.add('done');
+  store.set('last',st.id); /* remembered for the つづきから (Continue) button */
 }
+
+/* ── guided flow: end-of-room buttons following the ①→⑤ order.
+     The story button doubles as the "I read it!" star — the story star
+     is earned by REACHING THE END, not by just opening the stage. ── */
+const ROOM_ORDER=['story','spells','vocab','quests','boss'];
+const ROOM_LABEL={spells:'🔍 Key Spells · 呪文(じゅもん)解析(かいせき)',vocab:'🎴 Items · アイテム図鑑(ずかん)',quests:'⚔️ Quests · クエスト',boss:'👑 Boss · ボス戦(せん)'};
+function addRoomNav(has){
+  document.querySelectorAll('.room .btn-next-room').forEach(el=>el.remove());
+  const nextOf=r=>{const i=ROOM_ORDER.indexOf(r);for(let k=i+1;k<ROOM_ORDER.length;k++)if(has[ROOM_ORDER[k]])return ROOM_ORDER[k];return null;};
+  ROOM_ORDER.forEach(r=>{
+    if(!has[r]||r==='boss')return; /* boss already ends with its own Next Stage button */
+    const panel=document.querySelector('#room-'+r+' .panel-cream');if(!panel)return;
+    const nx=nextOf(r);
+    const b=document.createElement('button');b.className='btn-next-room';b.type='button';
+    if(r==='story'){
+      b.innerHTML=nx?`📖 よんだ！つぎへ →<span class="sub">${ruby(ROOM_LABEL[nx])}</span>`:'📖 よんだ！ ⭐ゲット！';
+      b.addEventListener('click',()=>{
+        markDone('story');flashFX(false);
+        if(nx)showRoom(nx,true);
+        else{b.disabled=true;b.innerHTML='⭐ よく よんだね！';}
+      });
+    }else{
+      if(!nx)return;
+      b.innerHTML=`つぎへ →<span class="sub">${ruby(ROOM_LABEL[nx])}</span>`;
+      b.addEventListener('click',()=>showRoom(nx,true));
+    }
+    panel.appendChild(b);
+  });
+}
+/* ── goal dock plumbing: during a stage, the 🎯 goal + hearts + BGM pill live in a
+     bar pinned to the bottom of the screen; on stage select the BGM pill floats again ── */
+function enterStageUI(){
+  document.body.classList.add('in-stage');
+  $('goal-dock').hidden=false;
+  $('dock-bgm-slot').appendChild($('bgm-ctrl')); /* listeners survive the move */
+  window.dispatchEvent(new Event('resize'));
+}
+function exitStageUI(){
+  document.body.classList.remove('in-stage');
+  $('goal-dock').hidden=true;
+  document.body.appendChild($('bgm-ctrl'));
+  window.dispatchEvent(new Event('resize'));
+}
+(function(){ /* keep --dock-h in sync so content never hides under the dock */
+  const dock=$('goal-dock');
+  const set=()=>document.documentElement.style.setProperty('--dock-h',(dock.hidden?0:dock.offsetHeight)+'px');
+  if(window.ResizeObserver)new ResizeObserver(set).observe(dock);
+  window.addEventListener('resize',set);set();
+})();
 $('btn-back').addEventListener('click',()=>{
   stopSceneAudio();
+  exitStageUI();
   $('stage-view').classList.remove('on');
   $('select-view').style.display='';
   buildStageGrid(); /* refresh stars without a full reload (keeps BGM going) */
   window.scrollTo({top:0,behavior:'smooth'});
 });
-document.querySelectorAll('#room-tabs button').forEach(b=>b.addEventListener('click',()=>showRoom(b.dataset.room)));
-function showRoom(r){
+document.querySelectorAll('#room-tabs button').forEach(b=>b.addEventListener('click',()=>showRoom(b.dataset.room,true)));
+function showRoom(r,scroll){
   room=r;
   if(r!=='story')stopSceneAudio();
   document.querySelectorAll('#room-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.room===r));
   document.querySelectorAll('.room').forEach(el=>el.classList.remove('on'));
   $('room-'+r).classList.add('on');
-  if(cur&&cur.pool){if(r==='boss')setHearts(5);else if(r==='quests')setHearts(3);}
+  syncRoomHearts(r); /* per-room hearts remembered across tab switches */
+  renderHearts();
+  if(scroll){ /* land with the new room's content right under the sticky tabs */
+    const tabs=$('room-tabs');
+    const y=$('room-'+r).getBoundingClientRect().top+window.scrollY-tabs.offsetHeight-26;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
 }
+/* keep --tabs-h in sync so the sticky 💬 lang toggle sits just below the tab bar */
+(function(){
+  const tabs=$('room-tabs');
+  const set=()=>document.documentElement.style.setProperty('--tabs-h',tabs.offsetHeight+'px');
+  if(window.ResizeObserver)new ResizeObserver(set).observe(tabs);
+  window.addEventListener('resize',set);set();
+})();
 
 /* ① story */
 function buildStory(){
@@ -1066,6 +1254,12 @@ function buildStory(){
 /* ② spells */
 function buildSpells(){
   const box=$('spells');box.innerHTML='';
+  const total=cur.spells.length;let seen=0;
+  const counter=document.createElement('p');counter.className='star-count';box.appendChild(counter);
+  function paintCount(){
+    counter.innerHTML=seen>=total?'⭐ ゲット！ぜんぶ よんだね！':ruby(`ぜんぶ ひらいて ⭐ゲット！ あと <b>${total-seen}</b> こ`);
+  }
+  paintCount();
   cur.spells.forEach((sp,idx)=>{
     const d=document.createElement('div');d.className='spell';
     d.innerHTML=`<button class="spell-head"><span class="icon">🔮</span>
@@ -1075,7 +1269,13 @@ function buildSpells(){
       <div class="bq-inrow" style="justify-content:flex-start;margin-top:10px;">
         <button class="say-mini sp-say">🔊 きく</button>${SR?'<button class="say-mini sp-mic">🎤 いってみる</button>':''}
       </div><p class="heard sp-heard"></p></div>`;
-    d.querySelector('.spell-head').addEventListener('click',()=>{d.classList.toggle('open');checkSpellsDone();});
+    d.querySelector('.spell-head').addEventListener('click',()=>{
+      d.classList.toggle('open');
+      if(d.classList.contains('open')&&!d.dataset.seen){
+        d.dataset.seen='1';seen++;paintCount();
+        if(seen>=total){markDone('spells');flashFX(false);}
+      }
+    });
     const spoken=sp.en.replace(/\s*—\s*/g,' ... ');
     const spsay=d.querySelector('.sp-say');spsay.addEventListener('click',()=>{sfxTap();zapEl(spsay);sayOrFile('voice/spell_s'+cur.id+'_'+(idx+1)+'.mp3',spoken);});
     const mic=d.querySelector('.sp-mic');
@@ -1088,7 +1288,8 @@ function buildSpells(){
         listenOnce(alts=>{
           mic.classList.remove('rec');mic.textContent='🎤 いってみる';
           if(!alts.length){hd.textContent='（きこえなかった…もういちど！）';return;}
-          if(anyNaughty(alts)){blockPopup();hd.textContent='✋ ヒーローの ことばで はなそう！';return;}
+          /* voice only: flagged words are far more likely a mishear than a naughty kid — treat as "didn't catch that" */
+          if(anyNaughty(alts)){hd.textContent='（うまく ききとれなかった…もういちど ゆっくり！）';return;}
           if(fuzzyPass(alts,item)){sfxGood();voicePopup(true,alts[0]);hd.innerHTML='⭕ まほうじんに とどいた: <b>'+alts[0]+'</b>';}
           else{voicePopup(false,alts[0],sp.en);hd.innerHTML='△ きこえたのは: <b>'+alts[0]+'</b><br>おてほんを きいて、もういちど！';}
         });
@@ -1096,22 +1297,27 @@ function buildSpells(){
     }
     box.appendChild(d);
   });
-  function checkSpellsDone(){
-    if([...box.querySelectorAll('.spell')].every(s=>s.classList.contains('open')))markDone('spells');
-  }
 }
 
 /* ③ vocab */
 function buildVocab(){
   const box=$('vocab');box.innerHTML='';let flipped=0;
   const goal=Math.min(12,cur.vocab.filter(v=>v.w).length);
+  const counter=document.createElement('p');counter.className='star-count';box.appendChild(counter);
+  function paintCount(){
+    counter.innerHTML=flipped>=goal?'⭐ ゲット！カードマスターだ！':ruby(`カードを めくって ⭐ゲット！ あと <b>${goal-flipped}</b> まい`);
+  }
+  paintCount();
   const status=document.createElement('p');status.className='heard';status.id='vocab-heard';box.appendChild(status);
   cur.vocab.forEach(v=>{
     if(v.cat){const h=document.createElement('p');h.className='vcat';h.innerHTML=ruby(v.cat);box.appendChild(h);return;}
     const d=document.createElement('button');d.className='vcard';
     d.innerHTML=`<span class="w">${v.w}</span><span class="m">${ruby(v.m)}${v.k?`<span class="yomi">${v.k}<br>/${v.p}/</span>`:''}</span><span class="v-say" title="きく">🔊</span>${SR?'<span class="v-mic" title="いってみる">🎤</span>':''}`;
     d.addEventListener('click',()=>{
-      if(!d.classList.contains('flip')){flipped++;if(flipped>=goal)markDone('vocab');}
+      if(!d.classList.contains('flip')){
+        flipped++;paintCount();
+        if(flipped===goal){markDone('vocab');flashFX(false);}
+      }
       d.classList.toggle('flip');
     });
     const spoken=v.w.replace(/\s*→\s*/g,', ');
@@ -1127,7 +1333,7 @@ function buildVocab(){
       listenOnce(alts=>{
         vm.classList.remove('rec');
         if(!alts.length){status.textContent='（きこえなかった…もういちど！）';return;}
-        if(anyNaughty(alts)){blockPopup();status.textContent='✋ ヒーローの ことばで はなそう！';return;}
+        if(anyNaughty(alts)){status.textContent='（うまく ききとれなかった…もういちど ゆっくり！）';return;}
         if(fuzzyPass(alts,item)){sfxGood();voicePopup(true,alts[0]);status.innerHTML='⭕ 「'+v.w+'」きこえたよ！ <b>'+alts[0]+'</b>';}
         else{voicePopup(false,alts[0],spoken);status.innerHTML='△ きこえたのは <b>'+alts[0]+'</b> — 🔊 で おてほんを きいてみよう！';}
       });
@@ -1189,7 +1395,7 @@ function buildPairs(blk,q,onClear){
       if(sel===b){sel.classList.remove('picked');sel=null;return;}
       if(sel.dataset.k===b.dataset.k){sfxGood();sel.classList.remove('picked');sel.classList.add('good');b.classList.add('good');sel=null;solved++;
         if(solved>=q.pairs.length){status.textContent='クリア！ ⭐';flashFX(false);if(!done){done=true;onClear();}}
-      }else{b.classList.add('bad');loseHeart();const s=sel;sel=null;setTimeout(()=>{b.classList.remove('bad');s.classList.remove('picked');},380);}
+      }else{b.classList.add('bad');sfxOops();/* pairs = exploration, no heart loss */const s=sel;sel=null;setTimeout(()=>{b.classList.remove('bad');s.classList.remove('picked');},380);}
     });
     tiles.appendChild(b);
   });
@@ -1470,7 +1676,7 @@ function roundProd(wrap,it,onOk){
       listenOnce(alts=>{
         mic.classList.remove('rec');
         if(!alts.length){heard.textContent='（きこえなかった…マイクのちかくで、もういちど！）';return;}
-        if(anyNaughty(alts)){blockPopup();heard.textContent='✋ ヒーローの ことばで はなそう！';return;}
+        if(anyNaughty(alts)){heard.textContent='（うまく ききとれなかった…もういちど ゆっくり！）';return;}
         inp.value=alts[0];
         if(fuzzyPass(alts,it)){voicePopup(true,alts[0]);win();}
         else{voicePopup(false,alts[0],it.en);fail('きこえたのは「'+alts[0]+'」。');}
@@ -1550,7 +1756,7 @@ function buildSpeaking(blk,items,onClear){
         listenOnce(alts=>{
           mic.classList.remove('rec');mic.textContent='🎤 いってみる！';
           if(!alts.length){heard.textContent='（きこえなかった…マイクのちかくで、もういちど！）';return;}
-          if(anyNaughty(alts)){blockPopup();heard.textContent='✋ ヒーローの ことばで はなそう！';return;}
+          if(anyNaughty(alts)){heard.textContent='（うまく ききとれなかった…もういちど ゆっくり！）';return;}
           if(fuzzyPass(alts,it)){voicePopup(true,alts[0]);heard.innerHTML='まほうじんに とどいた:<br><b>'+alts[0]+'</b> ⭐';sfxGood();flashFX(false);setTimeout(next,1100);}
           else{
             fails++;voicePopup(false,alts[0],it.en);heard.innerHTML='きこえたのは:<br><b>'+alts[0]+'</b><br>もういちど チャレンジ！';
@@ -1642,7 +1848,16 @@ function buildBossPool(){
       ${cur.id<11?`<button class="next-stage" id="boss-next">Next Stage! →<span class="jp">つぎのステージへ！</span></button>`:''}</div>`;
     panel.querySelector('#boss-again').addEventListener('click',()=>{setHearts(5);start();});
     const nx=panel.querySelector('#boss-next');
-    if(nx)nx.addEventListener('click',()=>{const n=STAGES.find(s=>s.id===cur.id+1);if(n)openStage(n);});
+    if(nx)nx.addEventListener('click',()=>{
+      const i=STAGES.findIndex(s=>s.id===cur.id+1);
+      if(i<0)return;
+      if(!isUnlocked(i)){ /* boss beaten but story unread — send them to the key 🔑 */
+        lockToast(cur);
+        showRoom('story',true);
+        return;
+      }
+      openStage(STAGES[i]);
+    });
   }
   function start(){makePlan();qi=0;ask();}
   start();
@@ -1736,6 +1951,36 @@ function buildBoss(){
   paint();
   /* the START tap is the user gesture that lets audio autoplay */
   startBtn.addEventListener('click',()=>{modal.classList.add('hide');playBgm();});
+})();
+
+/* ════════ TEACHER RESET (hidden) ════════
+   Shared classroom tablets collect stars from every class. Long-press the
+   footer for 1.5s to wipe stage progress on this device (BGM prefs kept). */
+(function(){
+  const f=document.querySelector('footer');if(!f)return;
+  let t=null;
+  const start=()=>{t=setTimeout(()=>{
+    if(confirm('先生モード / Teacher mode:\n【OK】 すべての進捗(スター)をリセット / Reset ALL progress\n【キャンセル】 ほかのオプションへ / More options…')){
+      Object.keys(localStorage)
+        .filter(k=>k.indexOf('hp-sm-stage')===0||k==='hp-sm-last')
+        .forEach(k=>localStorage.removeItem(k));
+      exitStageUI();
+      $('stage-view').classList.remove('on');
+      $('select-view').style.display='';
+      cur=null;buildStageGrid();
+      window.scrollTo({top:0});
+      alert('リセットしました ✔ / Progress reset.');
+    }else if(confirm(unlockAllOn()
+      ?'先生モード: ステージロックを もとにもどしますか？\nTeacher: re-enable stage locks?'
+      :'先生モード: すべてのステージのロックを解除しますか？(プレビュー用)\nTeacher: unlock ALL stages? (preview mode)')){
+      store.set('unlockAll',unlockAllOn()?0:1);
+      buildStageGrid();
+      alert(unlockAllOn()?'🔓 ぜんぶ アンロックしました / All stages unlocked.':'🔒 ロックを もどしました / Locks re-enabled.');
+    }
+  },1500);};
+  const cancel=()=>clearTimeout(t);
+  f.addEventListener('pointerdown',start);
+  ['pointerup','pointerleave','pointercancel'].forEach(e=>f.addEventListener(e,cancel));
 })();
 
 /* turn any remaining literal 漢字(かな) in static markup into furigana-on-top */
