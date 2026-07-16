@@ -1532,6 +1532,24 @@ function misspell(w){
   const pick=shuffled(cands).find(x=>x&&x.toLowerCase()!==core.toLowerCase());
   return pick?pick+tail:null;
 }
+/* ~half of BREAK-phase items become SPELLING errors instead of grammar ones,
+   so kids hunt typos (recieve-style) as often as wrong words */
+function spellifyFix(it){
+  if(Math.random()<0.5)return it;
+  const idxs=it.chunks.map((c,i)=>({c,i})).filter(o=>/^[A-Za-z']{4,}/.test(o.c));
+  if(!idxs.length)return it;
+  const pick=idxs[Math.floor(Math.random()*idxs.length)];
+  const bad=misspell(pick.c);
+  if(!bad)return it;
+  const words=it.chunks.slice();words[pick.i]=bad;
+  const opts=[];let guard=0;
+  while(opts.length<3&&guard++<12){
+    const m2=misspell(pick.c);
+    if(m2&&m2!==bad&&opts.indexOf(m2)<0&&m2.toLowerCase()!==pick.c.toLowerCase())opts.push(m2);
+  }
+  if(opts.length<2)return it; /* not enough distinct decoys — keep the authored version */
+  return Object.assign({},it,{broken:words.join(' '),fixIdx:pick.i,fix:pick.c,fixOpts:opts});
+}
 /* swap one wrong option for a fresh misspelling of the correct answer (~60% of rounds) */
 function spiceOpts(opts,correct){
   const o=opts.slice();
@@ -1816,7 +1834,7 @@ function buildBossPool(){
       return out;}
     plan=[]
       .concat(take(all.filter(i=>i.traps&&poolChunks(i).length>=3&&poolChunks(i).length<=8),2).map(it=>({ph:1,it})))
-      .concat(take(all.filter(i=>i.broken),3).map(it=>({ph:2,it})))
+      .concat(take(all.filter(i=>i.broken),3).map(it=>({ph:2,it:spellifyFix(it)})))
       .concat(take(all.filter(i=>i.accept&&poolChunks(i).length<=7),2).map(it=>({ph:3,it})));
   }
   function segCircle(lit){
