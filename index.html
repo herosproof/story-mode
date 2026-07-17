@@ -244,7 +244,7 @@ button:active{transform:scale(.94);}
 .from-story{display:inline-block;margin-top:6px;font-size:.78rem;font-weight:700;color:var(--gold-deep);background:rgba(255,246,214,.85);border:1px dashed rgba(138,103,18,.4);border-radius:10px;padding:4px 10px;}
 /* ── Lumi portrait inside the boss circle ── */
 .circle-wrap{position:relative;}
-.circle-lumi{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:66%;max-width:200px;z-index:0;filter:grayscale(1) opacity(.5);transition:filter .6s ease;pointer-events:none;}
+.circle-lumi{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:98px;z-index:0;border-radius:50%;filter:grayscale(1) opacity(.5);transition:filter .6s ease;pointer-events:none;}
 .mcircle{position:relative;z-index:1;}
 .circle-lumi.lit{filter:grayscale(0) opacity(1);animation:lumiGlow 1.5s ease-in-out infinite;}
 @keyframes lumiGlow{0%,100%{filter:drop-shadow(0 0 8px var(--gold-light)) grayscale(0);}50%{filter:drop-shadow(0 0 22px var(--purple-light)) grayscale(0);}}
@@ -472,6 +472,21 @@ footer{margin-top:62px;text-align:center;padding:26px 0;border-top:1px solid rgb
 </div>
 
 <script>
+/* iPad/remote debugging: add ?debug=1 to the URL to see errors on screen */
+if(location.search.indexOf('debug')>-1){(function(){
+  var box=null;
+  function show(msg){
+    if(!box){box=document.createElement('pre');
+      box.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;max-height:45%;overflow:auto;background:#7a1f1f;color:#fff;font:12px/1.5 monospace;padding:10px 12px;border-radius:10px;z-index:99999;white-space:pre-wrap;margin:0;';
+      (document.body||document.documentElement).appendChild(box);}
+    box.textContent+=msg+'\n';}
+  window.addEventListener('error',function(e){
+    show('❌ '+(e.message||'error')+(e.filename?'\n   @ line '+e.lineno:'')); },true);
+  window.addEventListener('unhandledrejection',function(e){
+    show('❌ promise: '+(e.reason&&e.reason.message?e.reason.message:e.reason)); });
+  window.addEventListener('load',function(){ if(!box)show('✅ loaded with no errors — UA: '+navigator.userAgent.slice(0,80)); });
+})();}
+
 /* ── Starfield ── */
 (function(){
   const sf=document.getElementById('starfield');
@@ -1480,6 +1495,7 @@ function say(text,rate){try{
 }catch(e){}}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 function listenOnce(onResult){
+  if(!SR){onResult([]);return;}
   const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=4;
   let got=false;
   r.onresult=e=>{got=true;onResult([].map.call(e.results[0],a=>a.transcript));};
