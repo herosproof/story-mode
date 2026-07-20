@@ -1037,7 +1037,7 @@ function markDone(roomName){
 
 function openStage(st){
   stopSceneAudio();
-  cur=st;
+  cur=st;room='story';
   $('select-view').style.display='none';
   $('stage-view').classList.add('on');
   $('sv-title').innerHTML=`STAGE ${st.id} · ${st.nameEn}<span class="jp">${noFuri(st.nameJp)}</span>`;
@@ -1451,7 +1451,8 @@ const sfxFlashS=()=>sfxTone(1100,'sine',.35,.14,0,2300);
 const sfxOops=()=>sfxTone(340,'triangle',.12,.13,0,240);
 const sfxMicOn=()=>{sfxTone(620,'sine',.1,.16);sfxTone(930,'sine',.14,.16,.09);};
 /* future ElevenLabs drop-in: put mp3s at voice/... and they auto-play; missing files fall back to TTS */
-function sayOrFile(file,text){try{const a=new Audio(file);a.onerror=()=>say(text);a.play().catch(()=>say(text));}catch(e){say(text);}}
+const VOICE_DEBUG=/[?&]debug=1/.test(location.search);
+function sayOrFile(file,text){try{const a=new Audio(file);a.onplay=()=>{if(VOICE_DEBUG)console.log('[voice] file:',file);};a.onerror=()=>{if(VOICE_DEBUG)console.log('[voice] TTS fallback:',text);say(text);};a.play().catch(()=>say(text));}catch(e){say(text);}}
 const NAUGHTY=/\b(f+u+c*k\w*|sh+i+t\w*|bitch\w*|asshole|arse|cunt\w*|dick\w*|pussy|bastard|nigg\w*|slut|whore|sexy?|penis|vagina|boobs?|damn|crap)\b/i;
 function isNaughty(t){t=String(t||'');return NAUGHTY.test(t)||t.indexOf('*')>=0;}
 function anyNaughty(alts){return (alts||[]).some(isNaughty);}
@@ -1631,9 +1632,9 @@ function roundChoice(wrap,it,onOk){
   });
 }
 function roundListen(wrap,it,pool,onOk){
-  const play=document.createElement('button');play.className='say-btn';play.textContent='🔊 もういちど きく';
+  const play=document.createElement('button');play.className='say-btn';play.textContent='🔊 きく';
   play.style.display='block';play.style.margin='0 auto 10px';
-  play.addEventListener('click',()=>{sfxTap();zapEl(play);say(it.en);});
+  play.addEventListener('click',()=>{sfxTap();zapEl(play);sayOrFile('voice/sent_'+wslug(it.en)+'.mp3',it.en);});
   const opts=document.createElement('div');opts.className='boss-opts';
   wrap.append(play,opts);
   const wrongs=sample(pool.filter(x=>x!==it&&x.en!==it.en),2).map(x=>x.en);
@@ -1647,7 +1648,7 @@ function roundListen(wrap,it,pool,onOk){
     });
     opts.appendChild(b);
   });
-  setTimeout(()=>say(it.en),300);
+  if(room==='quests'||room==='boss')setTimeout(()=>sayOrFile('voice/sent_'+wslug(it.en)+'.mp3',it.en),300);
 }
 function roundFix(wrap,it,onOk){
   const jpP=document.createElement('p');jpP.className='boss-qjp show';jpP.style.textAlign='center';jpP.innerHTML=ruby(it.jp);
@@ -1780,7 +1781,7 @@ function buildSpeaking(blk,items,onClear){
     const pj=document.createElement('p');pj.className='boss-qjp show';pj.innerHTML=ruby(it.jp);
     const row=document.createElement('div');row.className='bq-inrow';row.style.justifyContent='center';
     const lb=document.createElement('button');lb.className='say-btn';lb.textContent='🔊 おてほん';
-    lb.addEventListener('click',()=>{sfxTap();zapEl(lb);say(it.en);});
+    lb.addEventListener('click',()=>{sfxTap();zapEl(lb);sayOrFile('voice/sent_'+wslug(it.en)+'.mp3',it.en);});
     row.appendChild(lb);
     const heard=document.createElement('p');heard.className='heard';
     if(SR){
